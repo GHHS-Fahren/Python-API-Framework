@@ -58,9 +58,17 @@ class FormFields():
         """Retrieves a field by the question number"""
         return self._fields[self._index_map[field_index]]
     
-    def get_by_name(self, field_name: str) -> Any:
-        """Retrieves a field by the field name"""
-        return self._fields[self._name_map[field_name]]
+    def get_by_name(self, field_name: str) -> Any|None:
+        """
+        Retrieves a field by the field name. Requires `_name_map` to
+        be set.
+
+        If `field_name` has a valid name map but does not exist in the
+        fields it will return `None` as it could be an optional field
+        that just wasnt filled in the form.
+        """
+        field_id = self._name_map[field_name]
+        return self._fields.get(field_id, None)
 
     @overload
     def get_all(self, mapping: Literal["INDEX"]) -> list[Any]: ...

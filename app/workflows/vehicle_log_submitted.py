@@ -32,7 +32,6 @@ If any errors occur, an email should be sent to
 
 from uuid import uuid4
 from datetime import datetime
-from logging import info, error
 
 from app.ghl.client import GHLClient
 from app.ghl.objects.models import CustomObjectRequest
@@ -46,7 +45,6 @@ def main() -> None:
         location_id = "PoAqc6nsBdsQQIZA3WsX"
     )
 
-    print("Retrieving form submission...")
     # Retrieving the form submission
     name_mappings = {
         "registration":   "J6YR0PTxfEn05h0Wd8p3",
@@ -65,7 +63,6 @@ def main() -> None:
         limit = 1
     )[0]
 
-    print("Retrieving vehicle data...")
     # Retrieving the associated vehicle's data
     filters = [{
         "field": "properties.vehicle_registration",
@@ -78,7 +75,6 @@ def main() -> None:
         limit = 1
     )[0]
 
-    print("Creating new vehicle log...")
     # Creating a new vehicle log
     record_data = {
         "properties": {
@@ -99,7 +95,6 @@ def main() -> None:
         record_data = CustomObjectRequest.model_validate(record_data)
     )
 
-    print("Processing & uploading images...")
     # Uploading the images to the newly created vehicle log
     images = {
         "odometer":
@@ -128,7 +123,6 @@ def main() -> None:
         files = images
     )
 
-    print("Updating vehicle log to include uploaded images...")
     # Update vehicle log to include uploaded files
     record_data = {
         "properties": {
@@ -155,7 +149,6 @@ def main() -> None:
         record_data = CustomObjectRequest.model_validate(record_data)
     )
 
-    print("Creating association between vehicle and vehicle log...")
     # Create association between vehicle and vehicle log
     relation = ghl_client.relations.create_relation(
         association_id = "69d72241a0b3ec4a65b0ae6e",

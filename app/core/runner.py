@@ -12,38 +12,46 @@ def verify_auth(
     ) -> None:
     auth = request.headers.get("Authorization", "")
     if auth != f"Bearer {required_token}":
-        print("Unauthorized access.")
         abort(403)
 
 @app.post("/")
 def webhook() -> None:
     verify_auth(environ["WEBHOOK_TOKEN"])
 
-    info("Webhook has been triggered")
-    print("Webhook has been triggered")
     module=import_module(f"app.workflows.{environ["WORKFLOW_NAME"]}")
 
     try:
+        info("Webhook initiated")
         module.main()
-        info("Webhook has completed successfully.")
-        print("Webhook has completed successfully.")
+        info("Webhook completed")
         return {
             "success": True,
             "details": ""
         }, 200
     except Exception as e:
-        print(f"Webhook has encountered an error.\n{e}")
-        error(f"Webhook has encountered an error.\n{e}")
         return {
             "success": False,
             "details": str(e).replace("\n","<br>")
         }, 500
     
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv()
+    # from dotenv import load_dotenv
+    # load_dotenv()
+
+    with app.test_client() as client:
+        response = client.post(
+            "/",
+            headers = {
+                "Authorization": f"Bearer {environ["WEBHOOK_TOKEN"]}"
+            }
+        )
+        print(response.status_code)
+        print(response.text)
+    
     app.run(
         debug = True,
+        use_debugger = False,
+        use_reloader = False,
         host = "0.0.0.0",
         port = 8080
     )
