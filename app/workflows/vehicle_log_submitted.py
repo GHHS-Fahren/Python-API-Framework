@@ -169,5 +169,12 @@ def main() -> None:
         second_record_id = vehicle.id
     )
 
+    return {
+        "vehicle_rego": form.fields.get_by_name("registration"),
+        "current_odom": int(form.fields.get_by_name("odometer")),
+        "due_odo":int(vehicle.custom_fields["next_service_odometer"]),
+        "due_date": vehicle.custom_fields["next_service_date"]
+    }
+
 if __name__ == "__main__":
     main()
