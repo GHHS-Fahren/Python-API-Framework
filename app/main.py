@@ -11,7 +11,7 @@ if __name__ == "__main__":
     
     with app.test_client() as client:
         response = client.post(
-            "/vehicle_log_submitted",
+            "/vehicle_service_submitted",
             headers = {
                 "Authorization": f"Bearer {environ["WEBHOOK_TOKEN"]}"
             }

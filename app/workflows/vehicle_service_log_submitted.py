@@ -27,6 +27,7 @@ The goals for this is to:
   6. Upload attached image to service log
   7. Update service log to include image
   8. Assign the service log to associated vehicle
+  9. Assign the service log to associated business
 
 If any errors occur, an email should be sent to
   it_support@ghhomesafety.com.au
@@ -210,6 +211,13 @@ def main() -> None:
         association_id = "6a138994e8d03912dc647e8b",
         first_record_id = service_log.id,
         second_record_id = vehicle.id
+    )
+
+    # 9. Assign the service log to associated business
+    relation = ghl_client.relations.create_relation(
+        association_id = "6a13e07931f2405231c8d802",
+        first_record_id = business.id,
+        second_record_id = service_log.id
     )
 
 if __name__ == "__main__":
