@@ -12,4 +12,4 @@ CMD exec gunicorn \
     --workers 1 \
     --threads 1 \
     --timeout 0 \
-    app.core.runner:app
+    app.main:app

@@ -87,6 +87,9 @@ class RemoteImage():
         new_size = (int(width/ratio), int(height/ratio))
         if ratio > 1:
             image = image.resize(new_size, Image.LANCZOS)
+
+        if image.mode in ("RGBA", "LA", "P"):
+            image = image.convert("RGB")
         
         buffer = BytesIO()
         image.save(buffer,"jpeg",quality=jpeg_quality,optimize=True)

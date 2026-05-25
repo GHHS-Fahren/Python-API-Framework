@@ -15,8 +15,7 @@ on the code blocks (10MB memory which seems to run out when processing
 raw file data), the code will be placed in a google cloud run instance
 that triggers when a webhook is fired. GHL will send a webhook to the
 google cloud run instance that holds no information that will be
-parsed to the code. Should any errors occur, an email should be sent
-to 
+parsed to the code.
 
 The goals for this is to:
   1. Get latest form submission

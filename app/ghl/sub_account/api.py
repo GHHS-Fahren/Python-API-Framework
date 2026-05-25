@@ -11,16 +11,15 @@ if TYPE_CHECKING:
 
 class CustomFieldAPI():
     def __init__(
-            self,
-            api_client: GHLClient
-        ) -> None:
+        self,
+        api_client: GHLClient
+    ) -> None:
         self._api_client = api_client
 
     # @GHLClient.register_scope("locations/customFields.write")
     def upload_to_custom_fields(
         self,
         field_id: str,
-        # files: list[RemoteFile]
         files: dict[str, RemoteFile]
     ) -> dict[str, str]:
         """
