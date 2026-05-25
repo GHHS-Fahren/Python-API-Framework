@@ -11,18 +11,10 @@ if __name__ == "__main__":
     
     with app.test_client() as client:
         response = client.post(
-            "/vehicle_service_submitted",
+            "/vehicle_log_submitted",
             headers = {
                 "Authorization": f"Bearer {environ["WEBHOOK_TOKEN"]}"
             }
         )
         print(response.status_code)
         print(response.text)
-    
-    app.run(
-        debug = True,
-        use_debugger = False,
-        use_reloader = False,
-        host = "0.0.0.0",
-        port = 8080
-    )

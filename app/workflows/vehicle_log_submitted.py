@@ -20,10 +20,11 @@ parsed to the code.
 The goals for this is to:
   1. Get latest form submission
   2. Find vehicle with associated registration
-  3. Create a new vehicle log with provided details
-  4. Upload attached images to GHL (needs vehicle log id for upload)
-  5. Update vehicle log to include images
-  6. Assign the vehicle log to associated vehicle
+  3. Updating vehicle with new data
+  4. Create a new vehicle log with provided details
+  5. Upload attached images to GHL
+  6. Update vehicle log to include images
+  7. Assign the vehicle log to associated vehicle
 
 If any errors occur, an email should be sent to
   it_support@ghhomesafety.com.au
@@ -44,7 +45,7 @@ def main() -> None:
         location_id = "PoAqc6nsBdsQQIZA3WsX"
     )
 
-    # Retrieving the form submission
+    # 1. Get latest form submission
     name_mappings = {
         "registration":   "J6YR0PTxfEn05h0Wd8p3",
         "odometer":       "lvyVhrV7BVu0qdzaRDzl",
@@ -62,7 +63,7 @@ def main() -> None:
         limit = 1
     )[0]
 
-    # Retrieving the associated vehicle's data
+    # 2. Find vehicle with associated registration
     filters = [{
         "field": "properties.vehicle_registration",
         "operator": "eq",
@@ -74,7 +75,20 @@ def main() -> None:
         limit = 1
     )[0]
 
-    # Creating a new vehicle log
+    # 3. Updating vehicle with new data
+    record_data = {
+        "properties": {
+            "vehicle_odometer":
+                int(form.fields.get_by_name("odometer"))
+        }
+    }
+    vehicle = ghl_client.records.update_record(
+        object_key = vehicle.object_key,
+        record_id = vehicle.id,
+        record_data = CustomObjectRequest.model_validate(record_data)
+    )
+
+    # 4. Create a new vehicle log with provided details
     record_data = {
         "properties": {
             "submission_id":
@@ -94,7 +108,7 @@ def main() -> None:
         record_data = CustomObjectRequest.model_validate(record_data)
     )
 
-    # Uploading the images to the newly created vehicle log
+    # 5. Upload attached images to GHL
     images = {
         "odometer":
             RemoteImage(
@@ -122,7 +136,7 @@ def main() -> None:
         files = images
     )
 
-    # Update vehicle log to include uploaded files
+    # 6. Update vehicle log to include images
     record_data = {
         "properties": {
             "vehicle_photo_odometer": {
@@ -148,7 +162,7 @@ def main() -> None:
         record_data = CustomObjectRequest.model_validate(record_data)
     )
 
-    # Create association between vehicle and vehicle log
+    # 7. Assign the vehicle log to associated vehicle
     relation = ghl_client.relations.create_relation(
         association_id = "69d72241a0b3ec4a65b0ae6e",
         first_record_id = vehicle_log.id,

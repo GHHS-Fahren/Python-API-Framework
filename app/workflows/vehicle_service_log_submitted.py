@@ -112,7 +112,7 @@ def main() -> None:
         }
     }
     vehicle = ghl_client.records.update_record(
-        object_key = "custom_objects.vehicles",
+        object_key = vehicle.object_key,
         record_id = vehicle.id,
         record_data = CustomObjectRequest.model_validate(record_data)
     )
