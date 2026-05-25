@@ -220,5 +220,12 @@ def main() -> None:
         second_record_id = service_log.id
     )
 
+    return {
+        "vehicle_rego": form.fields.get_by_name("vehicle_rego"),
+        "current_odom": int(form.fields.get_by_name("vehicle_odom")),
+        "due_odo":int(vehicle.custom_fields["next_service_odometer"]),
+        "due_date": vehicle.custom_fields["next_service_date"]
+    }
+
 if __name__ == "__main__":
     main()

@@ -21,8 +21,8 @@ def create_webhook(workflow_func):
     @verify_auth
     def webhook():
         try:
-            workflow_func()
-            return {"success": True}, 200
+            ret = workflow_func() or {}
+            return ret.update({"success": True}), 200
         except Exception as err:
             if isinstance(err, RichException):
                 err_msg = str(err)
