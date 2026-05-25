@@ -169,6 +169,8 @@ def main() -> None:
         second_record_id = vehicle.id
     )
 
+    # Return the due data so GoHighLevel can check if due and if so
+    # send an email to the person in charge of vehicle management
     return {
         "vehicle_rego": form.fields.get_by_name("registration"),
         "current_odom": int(form.fields.get_by_name("odometer")),

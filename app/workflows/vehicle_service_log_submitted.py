@@ -34,16 +34,12 @@ If any errors occur, an email should be sent to
 """
 
 from uuid import uuid4
-from datetime import datetime, timedelta
 
 from app.ghl.client import GHLClient
 from app.ghl.objects.models import CustomObjectRequest
 from app.core.file_models import RemoteImage
 
 
-
-DATE_INTERVAL = 52  # How many weeks until next service due
-ODOM_INTERVAL = 100 # How many 1,000kms until next service due
 
 def filter_eq(key, val):
     return {
@@ -62,6 +58,8 @@ def main() -> None:
     name_mappings = {
         "vehicle_rego": "yJ4f26rQdnIn9FsF2igm",
         "service_date": "e5y42AONIMhKjcZP6Qzw",
+        "sticker_date": "Z1hGblLR4gUkiHHIx7r1",
+        "sticker_odom": "jQRmEeWd9y14UNc4kNyY",
         "vehicle_odom": "n3OXw4aq1iIG7qjeiGdv",
         "service_work": "xX2rQBm343iOeaFvUv9Z",
         "service_logs": "PISG4Pq6FA1yzC9dhkwJ",
@@ -91,12 +89,6 @@ def main() -> None:
     )[0]
 
     # 3. Update associated vehicle with new service data
-    date = datetime.strptime(
-        form.fields.get_by_name("service_date"), "%Y-%m-%d"
-    ) + timedelta(weeks = DATE_INTERVAL)
-    odom = int(
-        form.fields.get_by_name("vehicle_odom")
-    ) + (ODOM_INTERVAL * 1000)
     record_data = {
         "properties": {
             "vehicle_odometer":
@@ -106,9 +98,9 @@ def main() -> None:
             "last_service_odometer":
                 int(form.fields.get_by_name("vehicle_odom")),
             "next_service_date":
-                date.strftime("%Y-%m-%d"),
+                form.fields.get_by_name("sticker_date"),
             "next_service_odometer":
-                odom
+                int(form.fields.get_by_name("sticker_odom"))
         }
     }
     vehicle = ghl_client.records.update_record(
