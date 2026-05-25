@@ -22,7 +22,8 @@ def create_webhook(workflow_func):
     def webhook():
         try:
             ret = workflow_func() or {}
-            return ret.update({"success": True}), 200
+            ret.update({"success": True})
+            return ret, 200
         except Exception as err:
             if isinstance(err, RichException):
                 err_msg = str(err)
