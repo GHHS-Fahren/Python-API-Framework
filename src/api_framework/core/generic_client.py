@@ -1,7 +1,7 @@
 from requests import session
 from urllib.parse import urljoin
 
-from src.utils.rich_error import RichException
+from api_framework.utils.rich_error import RichException
 
 
 

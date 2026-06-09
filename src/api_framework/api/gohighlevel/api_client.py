@@ -1,11 +1,11 @@
 from os import environ
 
-from src.core.generic_client import BaseAPIClient
-from src.api.gohighlevel.forms import FormAPI
-from src.api.gohighlevel.objects import CustomObjectRecordAPI
-from src.api.gohighlevel.relations import RelationsAPI
-from src.api.gohighlevel.sub_account import CustomFieldAPI
-from src.api.gohighlevel.messages import MessagesAPI
+from api_framework.core.generic_client import BaseAPIClient
+from api_framework.api.gohighlevel.forms import FormAPI
+from api_framework.api.gohighlevel.objects import CustomObjectRecordAPI
+from api_framework.api.gohighlevel.relations import RelationsAPI
+from api_framework.api.gohighlevel.sub_account import CustomFieldAPI
+from api_framework.api.gohighlevel.messages import MessagesAPI
 
 
 

@@ -4,8 +4,8 @@ from os.path import splitext
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.api.gohighlevel.api_client import GHLClient
-    from src.models.common.file_models import RemoteFile
+    from api_framework.api.gohighlevel.api_client import GHLClient
+    from api_framework.models.common.file_models import RemoteFile
 
 
 

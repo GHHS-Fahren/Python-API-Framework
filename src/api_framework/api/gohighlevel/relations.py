@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from src.models.gohighlevel.relations import RelationResponse
+from api_framework.models.gohighlevel.relations import RelationResponse
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.api.gohighlevel.api_client import GHLClient
+    from api_framework.api.gohighlevel.api_client import GHLClient
 
 
 

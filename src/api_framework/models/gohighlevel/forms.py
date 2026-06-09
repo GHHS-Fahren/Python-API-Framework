@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from types import MappingProxyType
 
-from src.models.common.file_models import RemoteFile
-from src.utils.deep_freeze import deep_freeze
+from api_framework.models.common.file_models import RemoteFile
+from api_framework.utils.deep_freeze import deep_freeze
 
 from typing import Literal, Self, Mapping, overload, Any
 

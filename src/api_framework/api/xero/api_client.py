@@ -1,7 +1,7 @@
 from base64 import encode
 from datetime import datetime, timedelta
 
-from src.core.generic_client import BaseAPIClient
+from api_framework.core.generic_client import BaseAPIClient
 
 
 

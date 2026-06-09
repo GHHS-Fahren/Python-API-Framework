@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from src.models.gohighlevel.forms import FormSubmissionResponse
+from api_framework.models.gohighlevel.forms import FormSubmissionResponse
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from datetime import datetime
-    from src.api.gohighlevel.api_client import GHLClient
+    from api_framework.api.gohighlevel.api_client import GHLClient
     from collections.abc import Iterator
 
 class FormAPI():

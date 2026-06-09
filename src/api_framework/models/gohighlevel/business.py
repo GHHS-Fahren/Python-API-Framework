@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_serializer, \
     field_validator
 from datetime import datetime
 
-from src.models.common.file_models import RemoteFile
+from api_framework.models.common.file_models import RemoteFile
 
 from typing import Any
 

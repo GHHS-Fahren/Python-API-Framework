@@ -8,7 +8,7 @@ from ...models.gohighlevel.models import AssociationResponse
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.api.gohighlevel.api_client import GHLClient
+    from api_framework.api.gohighlevel.api_client import GHLClient
 
 class AssociationsAPI():
     def __init__(

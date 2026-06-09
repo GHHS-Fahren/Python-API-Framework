@@ -10,7 +10,7 @@ from .business.models import BusinessRequest, BusinessResponse
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.api.gohighlevel.api_client import GHLClient
+    from api_framework.api.gohighlevel.api_client import GHLClient
     from collections.abc import Iterator
 
 

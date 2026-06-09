@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from src.models.gohighlevel.messages import (
+from api_framework.models.gohighlevel.messages import (
     CreateEmailParams, CreateMessageRequest, CreateMessageResponse
 )
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.api.gohighlevel.api_client import GHLClient
+    from api_framework.api.gohighlevel.api_client import GHLClient
 
 
 
