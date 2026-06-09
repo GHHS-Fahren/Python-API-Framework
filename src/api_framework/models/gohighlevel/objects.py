@@ -70,7 +70,7 @@ class CustomObjectResponse(BaseModel):
     custom_fields: Mapping[str, Any]|None = Field(
         validation_alias="properties", default=None
     )
-    relations: tuple[Mapping]|None = None
+    relations: tuple[Mapping, ...]|None = None
 
     @field_validator("created_at", "updated_at", mode="before")
     @classmethod
@@ -104,7 +104,7 @@ class CustomObjectResponse(BaseModel):
                 custom_fields[name] = value
         return {
             k: deep_freeze(v)
-            for k,v in custom_fields
+            for k,v in custom_fields.items()
         }
     
     @field_validator("relations", mode="before")
@@ -112,7 +112,7 @@ class CustomObjectResponse(BaseModel):
     def validate_relations(
         cls,
         value: list[dict]
-    ) -> tuple[MappingProxyType]:
+    ) -> tuple[MappingProxyType, ...]:
         return tuple([
             deep_freeze(i)
             for i in value

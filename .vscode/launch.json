@@ -5,7 +5,7 @@
             "name": "Python: Runner",
             "type": "debugpy",
             "request": "launch",
-            "module": "app.main",
+            "module": "tests.manual_test",
             "console": "integratedTerminal",
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.env"

@@ -149,7 +149,7 @@ class CreateMessageResponse(BaseModel):
         default = None,
         validation_alias = "emailMessageId",
     )
-    message_ids: Optional[tuple[str]] = Field(
+    message_ids: Optional[tuple[str, ...]] = Field(
         default = None,
         validation_alias = "messageIds",
     )
@@ -162,5 +162,5 @@ class CreateMessageResponse(BaseModel):
     def validate_message_ids(
         cls,
         value: list[str]
-    ) -> tuple[str]:
+    ) -> tuple[str, ...]:
         return tuple(value)
