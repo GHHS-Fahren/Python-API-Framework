@@ -80,6 +80,7 @@ source .venv/bin/activate
 
 ```bash
 pip install -r requirements.txt
+pip install -e .
 ```
 
 ### 4. Configure Environment Variables
@@ -90,7 +91,7 @@ Example:
 
 ```env
 WEBHOOK_TOKEN="DEBUG_TOKEN"
-WORKFLOW_NAME="vehicle_log_submitted"
+SERVER_NAME="vehicle_logs_server"
 GHL_TOKEN=your_ghl_token
 ```
 
@@ -100,8 +101,10 @@ and what APIs it communicates with.
 ### 5. Run the Application
 
 ```bash
-python -m app.core.runner
+python -m app.main
 ```
+
+or if using VSCode, you can run it with `Run and Debug`
 
 
 
@@ -159,14 +162,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from app.ghl.client import GHLClient
+    from api_framework import GoHighLevel
 
 
 
 class ExampleClass():
     def __init__(
         self,
-        api_client: GHLClient
+        api_client: GoHighLevel
     ) -> None:
         self._api_client = api_client
 ```
@@ -206,3 +209,25 @@ their documentation. For example, the documentation specify a group
 for form related endpoints. The code will file structure will reflect
 this by adding a form folder which will hold the API handler for those
 form related endpoints in the API documentation.
+
+
+
+## GoHighLevel Information
+
+For this project the only thing to keep in mind is that when a vehicle
+needs to be added, there should be 4 places to add its registration:
+ 1. Create New Vehicle Log
+ 2. Create New Service Log
+
+
+
+## Extras
+
+### Updating requirements.txt
+
+Due to the project itself being within the requirements as an editable
+package, `requirements.txt` must be updated without that entry:
+
+```bash
+pip freeze --exclude-editable > requirements.txt 
+```
