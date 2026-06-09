@@ -110,7 +110,7 @@ class CustomObjectRecordAPI():
             "POST",
             f"/objects/{object_key}/records",
             json = {
-                **record_data.model_dump(),
+                **record_data,
                 "locationId": self._api_client.location_id
             }
         )["record"]
@@ -130,6 +130,6 @@ class CustomObjectRecordAPI():
             "PUT",
             f"/objects/{object_key}/records/{record_id}",
             params = {"locationId": self._api_client.location_id},
-            json = record_data.model_dump()
+            json = record_data
         )["record"]
         return CustomObjectResponse.model_validate(record)

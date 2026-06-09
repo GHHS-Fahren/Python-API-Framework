@@ -25,7 +25,7 @@ def field_to_files(data: list[dict]) -> list[RemoteFile]:
 class CustomObjectParams(TypedDict):
     owners: Optional[list[str]]
     followers: Optional[list[str]]
-    custom_fields: Optional[dict[str, Any]]
+    properties: Optional[dict[str, Any]]
 
 class CustomObjectRequest(BaseModel):
     owners: list[str]|None = None
