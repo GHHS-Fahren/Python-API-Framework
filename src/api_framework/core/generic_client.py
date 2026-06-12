@@ -3,6 +3,8 @@ from urllib.parse import urljoin
 
 from api_framework.utils.rich_error import RichException
 
+from typing import Any, Literal, overload
+
 
 
 class BaseAPIClient:
@@ -28,6 +30,9 @@ class BaseAPIClient:
             "Authorization": self._get_auth(**auth_kwargs),
             "Accept": "application/json"
         })
+        # This specifically targets servicem8 that likes to return
+        # created object's uuids through the headers 😭
+        self.REUQEST_INJECT_HEADERS: list[str] = []
     
     def _get_auth(
             self,
@@ -39,18 +44,47 @@ class BaseAPIClient:
         raise NotImplementedError(
             "Subclasses should have `_get_auth` implimented!"
         )
-        
+    
+    @overload
+    def request(
+        self,
+        method: str,
+        endpoint: str,
+        *,
+        return_headers: Literal[True],
+        params: dict[str, Any] | None = None,
+        json: dict[str, Any] | None = None,
+        data: str | None = None,
+        files: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+    ) -> tuple[dict[str, Any] | bytes, dict[str, str]]: ...
+
+    @overload
+    def request(
+        self,
+        method: str,
+        endpoint: str,
+        *,
+        return_headers: Literal[False] = ...,
+        params: dict[str, Any] | None = None,
+        json: dict[str, Any] | None = None,
+        data: str | None = None,
+        files: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+    ) -> dict[str, Any] | bytes: ...
+
     def request(
             self,
             method: str,
             endpoint: str,
             *,
-            params: dict | None = None,
-            json: dict | None = None,
-            data = None,
-            files: dict | None = None,
-            headers: dict | None = None
-    ) -> dict | bytes:
+            return_headers: bool = False,
+            params: dict[str, Any] | None = None,
+            json: dict[str, Any] | None = None,
+            data: str|None = None,
+            files: dict[str, Any] | None = None,
+            headers: dict[str, Any] | None = None
+    ) -> tuple[dict[str,Any]|bytes,dict[str,str]]|dict[str,Any]|bytes:
         """
         Thin wrapper for requests.request. Automatially throws an
         error if the request failed but otherwise returns dictionary
@@ -78,8 +112,12 @@ class BaseAPIClient:
                 }
             )
 
-        content_type = response.headers.get("Content-Type")
+        content_type = response.headers.get("Content-Type", "")
         if "application/json" in content_type:
-            return response.json()
+            if not return_headers:
+                return response.json()
+            return response.json(), dict(response.headers)
         else:
-            return response.content
+            if not return_headers:
+                return response.content
+            return response.content, dict(response.headers)

@@ -1,0 +1,1 @@
+def strint_to_bool(value: str) -> bool: return value == "1"
