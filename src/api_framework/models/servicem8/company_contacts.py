@@ -1,11 +1,15 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from datetime import datetime
+
+from api_framework.utils.model_validations import model_del_empty_str
+
+from typing import Any
 
 
 
 class CompanyContactResponse(BaseModel):
     model_config = ConfigDict(
-        frozen = True
+        frozen = True,
     )
 
     id: str = Field(
@@ -22,20 +26,19 @@ class CompanyContactResponse(BaseModel):
     updated_at: datetime = Field(
         validation_alias = "edit_date"
     )
-    first_name: str = Field(
-        validation_alias = "first"
+    first_name: str|None = Field(
+        validation_alias = "first",
+        default = None
     )
-    last_name: str = Field(
-        validation_alias = "last"
+    last_name: str|None = Field(
+        validation_alias = "last",
+        default = None
     )
-    mobile: str
-    phone: str
-    email: str
+    mobile: str|None = None
+    phone: str|None = None
+    email: str|None = None
 
-# DEPRECIATED
-"""
- - ready_to_invoice
- - ready_to_invoice_stamp
- - active_network_request_uuid
- - related_knowledge_articles
-"""
+    @model_validator(mode="before")
+    @classmethod
+    def del_empty_str(cls, data) -> dict[str, Any]:
+        return model_del_empty_str(data)

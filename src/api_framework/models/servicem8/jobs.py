@@ -1,11 +1,25 @@
 from pydantic import BaseModel, ConfigDict, Field, model_validator, \
     field_validator
 from datetime import datetime
-from typing import TypedDict, Literal, Any
+from json import loads
 
 from api_framework.models.common.address import FrozenAddress
+from api_framework.utils.model_validations import model_del_empty_str
+
+from typing import Literal, TypedDict, Any
 
 
+
+class JobParams(TypedDict):
+    company: str|None
+    category: str|None
+    queue: str|None
+    status: Literal["Quote","Work Order","Unsuccessful","Completed"]
+    address: FrozenAddress|None
+    billing_address: str|None
+    description: str|None
+    work_done: str|None
+    badges: tuple[str, ...]|None
 
 class JobResponse(BaseModel):
     model_config = ConfigDict(
@@ -21,9 +35,8 @@ class JobResponse(BaseModel):
     is_active: bool = Field(
         validation_alias = "active"
     )
-    created_by: str|None = Field(
-        validation_alias = "created_by_staff_uuid",
-        default = None
+    created_by: str = Field(
+        validation_alias = "created_by_staff_uuid"
     )
     company: str|None = Field(
         validation_alias = "company_uuid",
@@ -45,21 +58,16 @@ class JobResponse(BaseModel):
         validation_alias = "completion_actioned_by_uuid",
         default = None
     )
-    payment_by: str|None = Field(
-        validation_alias = "payment_actioned_by_uuid",
-        default = None
-    )
     created_at: datetime|None = Field(
-        validation_alias = "created_at",
+        validation_alias = "date",
         default = None
     )
     status: Literal[
         "Quote", "Work Order", "Unsuccessful", "Completed"
     ]
     address: FrozenAddress # convert multifields into one
-    is_address_valid: bool|None = Field(
-        validation_alias = "geo_is_valid",
-        default = None
+    is_address_valid: bool = Field(
+        validation_alias = "geo_is_valid"
     )
     billing_address: str|None = None
     description: str|None = Field(
@@ -79,9 +87,8 @@ class JobResponse(BaseModel):
         validation_alias = "quote_date",
         default = None
     )
-    is_quote_sent: bool|None = Field(
-        validation_alias = "quote_sent",
-        default = None
+    is_quote_sent: bool = Field(
+        validation_alias = "quote_sent"
     )
     quote_sent_at: datetime|None = Field(
         validation_alias = "quote_sent_stamp",
@@ -92,19 +99,11 @@ class JobResponse(BaseModel):
         default = None
     )
     purchase_order_number: str|None = None
-    is_invoice_sent: bool|None = Field(
-        validation_alias = "invoice_sent",
-        default = None
+    is_invoice_sent: bool = Field(
+        validation_alias = "invoice_sent"
     )
     invoice_sent_at: datetime|None = Field(
         validation_alias = "invoice_sent_stamp",
-        default = None
-    )
-    payment_method: str|None = None
-    payment_amount: float|None = None
-    payment_note: str|None = None
-    payment_at: datetime|None = Field(
-        validation_alias = "payment_date",
         default = None
     )
     is_payment_processed: bool|None = Field(
@@ -116,15 +115,15 @@ class JobResponse(BaseModel):
         default = None
     )
     is_payment_recieved: bool|None = Field(
-        validation_alias = "payment_recieved",
+        validation_alias = "payment_received",
         default = None
     )
     payment_recieved_at: datetime|None = Field(
-        validation_alias = "payment_recieved_stamp",
+        validation_alias = "payment_received_stamp",
         default = None
     )
     work_order_at: datetime|None = Field(
-        validation_alias = "work_order_stamp",
+        validation_alias = "work_order_date",
         default = None
     )
     queue_expires_at: datetime|None = Field(
@@ -146,13 +145,19 @@ class JobResponse(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
+    def del_empty_str(cls, data) -> dict[str, Any]:
+        return model_del_empty_str(data)
+
+    @model_validator(mode="before")
+    @classmethod
     def validate_address(
         cls,
         model_data: dict[str, Any]
     ) -> dict[str, Any]:
-        return {
-            **model_data,
-            "address": FrozenAddress.model_validate({
+        if model_data["geo_is_valid"] == 0:
+            address = FrozenAddress.model_validate({})
+        else:
+            address = FrozenAddress.model_validate({
                 "latitude": model_data.get("lat", None),
                 "longitude": model_data.get("lng", None),
                 "number": model_data.get("geo_number", None),
@@ -163,12 +168,12 @@ class JobResponse(BaseModel):
                 "country": model_data.get("geo_country", None),
                 "full_address": model_data.get("job_address", None)
             })
-        }
+        return {**model_data, "address": address}
 
     @field_validator(
         "created_at", "updated_at", "quoted_at",
         "quote_sent_at", "invoice_sent_at",
-        "payment_at", "payment_processed_at",
+        "payment_processed_at",
         "payment_recieved_at", "work_order_at",
         "queue_expires_at", "scheduled_end_at",
         "completed_at", "unsuccessful_at",
@@ -178,21 +183,21 @@ class JobResponse(BaseModel):
     def validate_dates(
         cls,
         date: str
-    ) -> datetime:
+    ) -> datetime|None:
+        if date == "0000-00-00 00:00:00": return None
         return datetime.fromisoformat(date)
 
     @field_validator(
-        "is_address_valid", "is_quote_sent",
-        "is_invoice_sent", "is_payment_processed",
+        "is_address_valid", "is_payment_processed",
         "is_payment_recieved", "is_active",
         mode = "before"
     )
     @classmethod
     def validate_bools(
         cls,
-        boolean: str
+        boolean: str|int
     ) -> bool:
-        return boolean == "1"
+        return int(boolean) == 1
     
     @field_validator(
         "number",
@@ -206,7 +211,7 @@ class JobResponse(BaseModel):
         return int(number)
     
     @field_validator(
-        "invoice_amount", "payment_amount",
+        "invoice_amount",
         mode = "before"
     )
     @classmethod
@@ -215,3 +220,16 @@ class JobResponse(BaseModel):
         amount: str
     ) -> float:
         return float(amount)
+
+    @field_validator(
+        "badges",
+        mode = "before"
+    )
+    @classmethod
+    def validate_badges(
+        cls,
+        badges: str
+    ) -> tuple[str, ...]|None:
+        badge_list = tuple(loads(badges))
+        if len(badge_list) == 0: return None
+        return badge_list

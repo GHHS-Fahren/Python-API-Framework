@@ -53,7 +53,7 @@ class CustomObjectRecordAPI():
             "page": page,
             "pageLimit": limit,
         }
-        if query: json["q"] = query
+        if query: json["query"] = query
         if filters: json["filters"] = filters
         if search_after: json["searchAfter"] = search_after
         records = self._api_client.request(

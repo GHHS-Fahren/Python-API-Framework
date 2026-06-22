@@ -1,17 +1,17 @@
 from pydantic import BaseModel, PrivateAttr, model_validator
+from pydantic.dataclasses import dataclass
 from mimetypes import guess_type
 from requests import get
 from PIL import Image, ImageOps
 from io import BytesIO
 
-from typing import Self
-
+from typing import Self, override
 
 
 
 class RemoteFile(BaseModel):
     name: str
-    mime: str|None = None
+    mime: str
     url: str
     _data: bytes|None = PrivateAttr(
         default=None
@@ -22,9 +22,11 @@ class RemoteFile(BaseModel):
         cls,
         data: dict
     ) -> dict:
+        new_data = {**data}
         if not "mime" in data:
-            data["mime"] = guess_type(data["name"])[0]
-        return data
+            if "type" in data: new_data["mime"] = data["type"]
+            else: new_data["mime"] = guess_type(data["name"])[0]
+        return new_data
 
     def get_data(
         self
@@ -39,8 +41,18 @@ class RemoteFile(BaseModel):
         self
     ) -> None:
         self._data = None
+    
+    @override
+    def __hash__(self) -> int:
+        return hash((self.name, self.mime, self.url))
+    
+    @override
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, RemoteFile): return False
+        return (self.name, self.mime, self.url) \
+            == (other.name, other.mime, other.url)
 
-class RemoteImage():
+class RemoteImage:
     def __init__(
             self,
             file: RemoteFile
@@ -96,3 +108,13 @@ class RemoteImage():
         self._data = buffer.getbuffer()
 
         return self
+
+    @override
+    def __hash__(self) -> int:
+        return hash((self.name, self.mime, self.url))
+    
+    @override
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, RemoteFile): return False
+        return (self.name, self.mime, self.url) \
+            == (other.name, other.mime, other.url)

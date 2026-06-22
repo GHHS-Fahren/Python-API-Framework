@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import quote
+
 from api_framework.models.servicem8.company_contacts import (
     CompanyContactResponse
 )
@@ -19,14 +21,13 @@ class CompanyContactAPI():
     
     def search_contacts(
         self,
-        filters: str
+        filters: str|None = None
     ) -> list[CompanyContactResponse]:
+        url = "companycontact.json"
+        if filters: url += f"?$filter={quote(filters)}"
         contacts = self._api_client.request(
             "GET",
-            "/companycontact.json",
-            params = {
-                "filter": filters
-            }
+            url
         )
         return [
             CompanyContactResponse.model_validate(i)

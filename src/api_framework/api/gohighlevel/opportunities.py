@@ -32,25 +32,25 @@ class OpportunitiesAPI():
         opportunity_data: OpportunityParams
     ) -> OpportunityResponse:
         opportunity = self._api_client.request(
-            "GET",
+            "POST",
             "/opportunities/upsert",
             json = {
-                "id": opportunity_data.opportunity_id,
-                "pipelineId": opportunity_data.pipeline_id,
+                "id": opportunity_data.get("opportunity_id"),
+                "pipelineId": opportunity_data.get("pipeline_id"),
                 "locationId": self._api_client.location_id,
-                "followers": opportunity_data.followers,
+                "followers": opportunity_data.get("followers"),
                 "isRemoveAllFollowers":
-                    opportunity_data.is_remove_all_followers,
+                    opportunity_data.get("is_remove_all_followers"),
                 "followersActionType":
-                    opportunity_data.followers_action_type,
-                "name": opportunity_data.name,
-                "status": opportunity_data.status,
-                "pipelineStageId": opportunity_data.pipeline_stage_id,
-                "monetaryValue": opportunity_data.pipeline_stage_id,
+                    opportunity_data.get("followers_action_type"),
+                "name": opportunity_data.get("name"),
+                "status": opportunity_data.get("status"),
+                "pipelineStageId": opportunity_data.get("pipeline_stage_id"),
+                "monetaryValue": opportunity_data.get("value"),
                 "forecastExpectedCloseDate":
-                    opportunity_data.forecast_expected_close_date,
-                "assignedTo": opportunity_data.assigned_to,
-                "lostReasonId": opportunity_data.lost_reason_id
+                    opportunity_data.get("forecast_expected_close_date"),
+                "assignedTo": opportunity_data.get("assigned_to"),
+                "lostReasonId": opportunity_data.get("lost_reason_id")
             }
         )["opportunity"]
         return OpportunityResponse.model_validate(opportunity)
@@ -60,5 +60,7 @@ class OpportunitiesAPI():
         opportunity_id: str,
         opportunity_data: OpportunityParams
     ) -> OpportunityResponse:
-        opportunity_data.opportunity_id = opportunity_id
-        return self.upsert_opportunity(opportunity_data)
+        return self.upsert_opportunity({
+            **opportunity_data,
+            "opportunity_id": opportunity_id
+        })

@@ -1,26 +1,27 @@
-from pydantic import BaseModel, ConfigDict, Field, model_serializer, \
-    field_validator
+from pydantic import BaseModel, ConfigDict, Field, BeforeValidator, \
+    field_validator, model_validator
 from datetime import datetime
-from types import MappingProxyType
 
+from api_framework.models.common.address import FrozenAddress
 from api_framework.models.common.file_models import RemoteFile
-from api_framework.models.common.ghl_contact \
-    import EmbeddedContactResponse
 from api_framework.utils.deep_freeze import deep_freeze
 
-from typing import Mapping, TypedDict, Optional, Any
+from collections.abc import Mapping
+from typing import Any, Annotated
 
 
 
 class EstimateItemsTaxResponse(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
     id: str = Field(
-        serialization_alias = "_id"
+        validation_alias = "_id"
     )
     tax_id: str = Field(
-        serialization_alias = "taxId"
+        validation_alias = "taxId"
     )
     name: str
-    rate: str
+    rate: int
     calculation: str
     description: str
 
@@ -28,100 +29,130 @@ class EstimateItemsResponse(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     id: str = Field(
-        serialization_alias = "_id"
+        validation_alias = "_id"
     )
     tax_inclusive: bool = Field(
-        serialization_alias = "tax_inclusive"
+        validation_alias = "taxInclusive"
     )
     description: str
     currency: str
     product_id: str = Field(
-        serialization_alias = "productId"
+        validation_alias = "productId"
     )
     price_id: str = Field(
-        serialization_alias = "priceId"
+        validation_alias = "priceId"
     )
     amount: int
     quantity: int = Field(
-        serialization_alias = "qty"
+        validation_alias = "qty"
     )
     name: str
     type: str
     taxes: tuple[EstimateItemsTaxResponse, ...]
     attachments: tuple[RemoteFile, ...]
 
+class EstimateContactResponse(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    id: str
+    name: str
+    phone: str = Field(
+        validation_alias = "phoneNo"
+    )
+    email: str
+    additional_emails: Annotated[
+        tuple[str, ...],
+        BeforeValidator(tuple)
+    ] = Field(
+        validation_alias = "additionalEmails"
+    )
+    address: FrozenAddress
+    # This is a dict of an unknown format so it has to be disabled
+    # otherwise the hashable tests fail, hasbnt been used once in a
+    # request of 200 invoices soooooo
+    # custom_fields: Annotated[
+    #     tuple[Any, ...],
+    #     BeforeValidator(deep_freeze)
+    # ] = Field(
+    #     validation_alias = "customFields"
+    # )
+
 class EstimateResponse(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     id: str = Field(
-        serialization_alias = "_id"
+        validation_alias = "_id"
     )
     live_mode: bool = Field(
-        serialization_alias = "liveMode"
+        validation_alias = "liveMode"
     )
     is_deleted: bool = Field(
-        serialization_alias = "deleted"
+        validation_alias = "deleted"
     )
     status: str = Field(
-        serialization_alias = "estimateStatus"
+        validation_alias = "estimateStatus"
     )
     company_id: str = Field(
-        serialization_alias = "companyId"
+        validation_alias = "companyId"
     )
-    discount: Mapping[str, Any]
+    # discount: Mapping[str, Any]
+    discount_type: str
+    discount_value: int
     title: str
     name: str
     items: tuple[EstimateItemsResponse, ...]
     issue_date: datetime = Field(
-        serialization_alias = "issueDate"
+        validation_alias = "issueDate"
     )
     expiry_date: datetime = Field(
-        serialization_alias = "expiryDate"
+        validation_alias = "expiryDate"
     )
     terms: str = Field(
-        serialization_alias = "termsNotes"
+        validation_alias = "termsNotes"
     )
-    contact: EmbeddedContactResponse = Field(
-        serialization_alias = "contactDetails"
+    contact: EstimateContactResponse = Field(
+        validation_alias = "contactDetails"
     )
     automatic_taxes_calculated: bool = Field(
-        serialization_alias = "automaticTaxesCalculated"
+        validation_alias = "automaticTaxesCalculated"
     )
-    meta: Mapping[str, Any]
+    # meta: Mapping[str, Any]
+    created_with_template: str|None
     number: int = Field(
-        serialization_alias = "estimateNumber"
+        validation_alias = "estimateNumber"
     )
     number_prefix: str = Field(
-        serialization_alias = "estimateNumberPrefix"
+        validation_alias = "estimateNumberPrefix"
     )
     updated_by: str = Field(
-        serialization_alias = "updatedBy"
+        validation_alias = "updatedBy"
     )
     currency: str
     action_history: tuple[Any, ...] = Field(
-        serialization_alias = "estimateActionHistory"
+        validation_alias = "estimateActionHistory"
     )
-    frequency_settings: Mapping[str, Any] = Field(
-        serialization_alias = "frequencySettings"
-    )
+    # frequency_settings: Mapping[str, Any] = Field(
+    #     validation_alias = "frequencySettings"
+    # )
     total: int
     attachments: tuple[RemoteFile, ...]
-    auto_invoice: Mapping[str, Any] = Field(
-        serialization_alias = "autoInvoice"
-    )
-    opportunity_details: Mapping[str, Any] = Field(
-        serialization_alias = "opportunityDetails"
-    )
-    configuration: Mapping[str, Any]
+    # auto_invoice: Mapping[str, Any] = Field(
+    #     validation_alias = "autoInvoice"
+    # )
+    # opportunity_details: Mapping[str, Any] = Field(
+    #     validation_alias = "opportunityDetails"
+    # )
+    opportunity_id: str|None = None
+    # configuration: Mapping[str, Any]
     created_at: datetime = Field(
-        serialization_alias = "createdAt"
+        validation_alias = "createdAt"
     )
     updated_at: datetime = Field(
-        serialization_alias = "updatedAt"
+        validation_alias = "updatedAt"
     )
-    currency_options: Mapping[str, Any] = Field(
-        serialization_alias = "currencyOptions"
-    )
+    # currency_options: Mapping[str, Any] = Field(
+    #     validation_alias = "currencyOptions"
+    # )
 
     @field_validator(
         "created_at", "updated_at",
@@ -139,11 +170,8 @@ class EstimateResponse(BaseModel):
         return datetime.fromisoformat(value)
     
     @field_validator(
-        "discount", "contact",
-        "meta", "action_history",
-        "frequency_settings", "auto_invoice",
-        "opportunity_details", "configuration",
-        "currency_options"
+        "action_history",
+        mode="before"
     )
     @classmethod
     def validate_freezable(
@@ -151,39 +179,54 @@ class EstimateResponse(BaseModel):
         value
     ) -> Any:
         return deep_freeze(value)
+    
+    @model_validator(mode="before")
+    @classmethod
+    def flatten_data(
+        cls,
+        model_data: dict[str, Any]
+    ) -> dict[str, Any]:
+        new_data = {**model_data}
+        new_data["created_with_template"] = new_data["meta"]["documentCreatedByTemplateId"]
+        if new_data["opportunityDetails"]:
+            new_data["opportunity_id"] = new_data["opportunityDetails"]["opportunityId"]
+        new_data["discount_type"] = new_data["discount"]["type"]
+        new_data["discount_value"] = new_data["discount"]["value"]
+        return new_data
 
 
 class EstimateTemplateResponse(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     id: str = Field(
-        serialization_alias = "_id"
+        validation_alias = "_id"
     )
     live_mode: bool = Field(
-        serialization_alias = "liveMode"
+        validation_alias = "liveMode"
     )
     is_deleted: bool = Field(
-        serialization_alias = "deleted"
+        validation_alias = "deleted"
     )
-    discount: Mapping[str, Any]
+    discount_type: str
+    discount_value: int
     title: str
     name: str
     items: tuple[EstimateItemsResponse, ...]
     terms: str = Field(
-        serialization_alias = "termsNotes"
+        validation_alias = "termsNotes"
     )
     updated_by: str = Field(
-        serialization_alias = "updatedBy"
+        validation_alias = "updatedBy"
     )
     currency: str
     total: int
     attachments: tuple[RemoteFile, ...]
-    configuration: Mapping[str, Any]
+    # configuration: Mapping[str, Any]
     created_at: datetime = Field(
-        serialization_alias = "createdAt"
+        validation_alias = "createdAt"
     )
     updated_at: datetime = Field(
-        serialization_alias = "updatedAt"
+        validation_alias = "updatedAt"
     )
 
     @field_validator(
@@ -200,13 +243,14 @@ class EstimateTemplateResponse(BaseModel):
         """
         return datetime.fromisoformat(value)
     
-    @field_validator(
-        "discount", "configuration",
-        mode = "before"
-    )
+    @model_validator(mode="before")
     @classmethod
-    def validate_freezable(
+    def flatten_data(
         cls,
-        value
-    ) -> Any:
-        return deep_freeze(value)
+        model_data: dict[str, Any]
+    ) -> dict[str, Any]:
+        return {
+            **model_data,
+            "discount_type": model_data["discount"]["type"],
+            "discount_value": model_data["discount"]["value"]
+        }

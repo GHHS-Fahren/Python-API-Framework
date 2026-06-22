@@ -25,30 +25,35 @@ class EstimatesAPI():
         *,
         limit: int|None = 20,
         offset: int|None = 0,
-        start_at: datetime|None = 0,
-        end_at: datetime|None = 0,
-        search: str|None = "",
-        contact_id: str|None = "",
+        start_at: datetime|None = None,
+        end_at: datetime|None = None,
+        search: str|None = None,
+        contact_id: str|None = None,
         status: Literal[
             "all", "draft", "sent",
             "accepted", "declined",
             "invoiced", "viewed"
-        ]|None = ""
+        ]|None = None
     ) -> list[EstimateResponse]:
-        estimates = self._api_client.request(
+        estimates = self._api_client.request(  # pyright: ignore[reportArgumentType, reportCallIssue]
             "GET",
             "/invoices/estimate/list",
             params = {
                 "altId": self._api_client.location_id,
                 "altType": "location",
-                "startAt": start_at.strftime("%Y-%m-%d"),
-                "endAt": end_at.strftime("%Y-%m-%d"),
+                "startAt":
+                    None if start_at is None
+                    else start_at.strftime("%Y-%m-%d"),
+                "endAt":
+                    None if end_at is None
+                    else end_at.strftime("%Y-%m-%d"),
                 "search": search,
                 "status": status,
                 "contactId": contact_id,
                 "limit": limit,
                 "offset": offset
-            }
+            },
+            delete_empty=True
         )["estimates"]
         return [
             EstimateResponse.model_validate(i)
@@ -70,7 +75,7 @@ class EstimatesAPI():
         limit: int|None = 20,
         offset: int|None = 0
     ) -> list[EstimateTemplateResponse]:
-        templates = self._api_client.request(
+        templates = self._api_client.request(  # pyright: ignore[reportArgumentType, reportCallIssue]
             "GET",
             "/invoices/estimate/template",
             params = {

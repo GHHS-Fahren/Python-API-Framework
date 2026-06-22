@@ -1,11 +1,9 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from datetime import datetime, date
+from datetime import datetime
 
-from api_framework.models.common.ghl_contact \
-    import EmbeddedContactResponse
 from api_framework.utils.deep_freeze import deep_freeze
 
-from typing import Mapping, Any, Optional, Literal
+from typing import Mapping, Any, Optional, Literal, TypedDict
 
 
 
@@ -24,6 +22,24 @@ class OpportunityParams(TypedDict):
     assigned_to: str|None
     lost_reason_id: str|None
 
+class OpportunityContactResponse(BaseModel):
+    model_config = ConfigDict(frozen = True)
+
+    id: str
+    name: str
+    email: str
+    phone: str
+    tags: tuple[str, ...]
+    followers: tuple[str, ...]
+
+    @field_validator("tags", "followers", mode="before")
+    @classmethod
+    def validate_tags(
+        cls,
+        tags: list[str]
+    ) -> tuple[str, ...]:
+        return tuple(tags)
+
 class OpportunityResponse(BaseModel):
     model_config = ConfigDict(frozen=True)
 
@@ -31,96 +47,96 @@ class OpportunityResponse(BaseModel):
     name: str
     value: Optional[float] = Field(
         default=None,
-        serialization_alias="monetaryValue"
+        validation_alias="monetaryValue"
     )
     pipeline_id: str = Field(
-        serialization_alias="pipelineId"
+        validation_alias="pipelineId"
     )
     pipeline_stage_id: str = Field(
-        serialization_alias="pipelineStageId"
+        validation_alias="pipelineStageId"
     )
     assigned_to: Optional[str] = Field(
         default=None,
-        serialization_alias="assignedTo"
+        validation_alias="assignedTo"
     )
     status: str
     source: Optional[str] = None
     last_status_change_at: Optional[datetime] = Field(
         default=None,
-        serialization_alias="lastStatusChangeAt"
+        validation_alias="lastStatusChangeAt"
     )
     last_stage_change_at: Optional[datetime] = Field(
         default=None,
-        serialization_alias="lastStageChangeAt"
+        validation_alias="lastStageChangeAt"
     )
     last_action_date: Optional[datetime] = Field(
         default=None,
-        serialization_alias="lastActionDate"
+        validation_alias="lastActionDate"
     )
     index_version: Optional[str] = Field(
         default=None,
-        serialization_alias="indexVersion"
+        validation_alias="indexVersion"
     )
     created_at: datetime = Field(
-        serialization_alias="createdAt"
+        validation_alias="createdAt"
     )
     updated_at: datetime = Field(
-        serialization_alias="updatedAt"
+        validation_alias="updatedAt"
     )
-    forecast_expected_close_date: Optional[date] = Field(
+    forecast_expected_close_date: Optional[datetime] = Field(
         default=None,
-        serialization_alias="forecastExpectedCloseDate"
+        validation_alias="forecastExpectedCloseDate"
     )
-    forecast_original_close_date: Optional[date] = Field(
+    forecast_original_close_date: Optional[datetime] = Field(
         default=None,
-        serialization_alias="forecastOriginalCloseDate"
+        validation_alias="forecastOriginalCloseDate"
     )
     forecast_slippage_count: Optional[int] = Field(
         default=None,
-        serialization_alias="forecastSlippageCount"
+        validation_alias="forecastSlippageCount"
     )
     forecast_days_slipped: Optional[int] = Field(
         default=None,
-        serialization_alias="forecastDaysSlipped"
+        validation_alias="forecastDaysSlipped"
     )
     forecast_last_slipped_at: Optional[datetime] = Field(
         default=None,
-        serialization_alias="forecastLastSlippedAt"
+        validation_alias="forecastLastSlippedAt"
     )
     forecast_probability: Optional[float] = Field(
         default=None,
-        serialization_alias="forecastProbability"
+        validation_alias="forecastProbability"
     )
     effective_probability: Optional[float] = Field(
         default=None,
-        serialization_alias="effectiveProbability"
+        validation_alias="effectiveProbability"
     )
     contact_id: Optional[str] = Field(
         default=None,
-        serialization_alias="contactId"
+        validation_alias="contactId"
     )
     location_id: str = Field(
-        serialization_alias="locationId"
+        validation_alias="locationId"
     )
-    contact: Optional[EmbeddedContactResponse] = None
+    contact: Optional[OpportunityContactResponse] = None
     notes: tuple[Any, ...] = Field(default_factory=tuple)
     tasks: tuple[Any, ...] = Field(default_factory=tuple)
     calendar_events: tuple[Any, ...] = Field(
         default_factory=tuple,
-        serialization_alias="calendarEvents"
+        validation_alias="calendarEvents"
     )
     lost_reason_id: Optional[str] = Field(
         default=None,
-        serialization_alias="lostReasonId"
+        validation_alias="lostReasonId"
     )
-    custom_fields: tuple[Mapping[str, Any], ...] = Field(
-        default_factory=tuple,
-        serialization_alias="customFields"
-    )
+    # custom_fields: tuple[Mapping[str, Any], ...] = Field(
+    #     default_factory=tuple,
+    #     validation_alias="customFields"
+    # )
     followers: tuple[str, ...] = Field(default_factory=tuple)
     external_object_id: Optional[str] = Field(
         default=None,
-        serialization_alias="externalObjectId"
+        validation_alias="externalObjectId"
     )
 
     @field_validator(
@@ -134,13 +150,13 @@ class OpportunityResponse(BaseModel):
     @classmethod
     def validate_dates(
         cls,
-        value: Optional[str]
-    ) -> Optional[date]:
-        return date.fromisoformat(value)
+        value: str
+    ) -> datetime:
+        return datetime.fromisoformat(value)
 
     @field_validator(
         "notes", "tasks", "calendar_events",
-        "custom_fields", "followers",
+        "followers",
         mode="before"
     )
     @classmethod

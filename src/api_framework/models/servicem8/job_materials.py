@@ -1,9 +1,11 @@
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, \
+    model_validator
 from datetime import datetime
 
-from api_framework.utils.model_validations import strint_to_bool
+from api_framework.utils.model_validations \
+    import strint_to_bool, model_del_empty_str
 
-from typing import Annotated, TypedDict
+from typing import Annotated, TypedDict, Any
 
 
 
@@ -67,7 +69,9 @@ class JobMaterialResponse(BaseModel):
         float,
         BeforeValidator(float)
     ]
-    tax_rate_id: str
+    tax_rate_id: str = Field(
+        validation_alias = "tax_rate_uuid"
+    )
     displayed_cost: Annotated[
         float,
         BeforeValidator(float)
@@ -79,5 +83,11 @@ class JobMaterialResponse(BaseModel):
     is_displayed_tax_inclusive: Annotated[
         bool,
         BeforeValidator(strint_to_bool)
-    ]
+    ] = Field(
+        validation_alias = "displayed_amount_is_tax_inclusive"
+    )
 
+    @model_validator(mode="before")
+    @classmethod
+    def del_empty_str(cls, data) -> dict[str, Any]:
+        return model_del_empty_str(data)

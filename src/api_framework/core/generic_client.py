@@ -1,5 +1,5 @@
 from requests import session
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlencode, quote, quote_plus
 
 from api_framework.utils.rich_error import RichException
 
@@ -20,19 +20,13 @@ class BaseAPIClient:
             base_url: str,
             **auth_kwargs
         ) -> None:
-        
-        if not isinstance(base_url, str):
-            raise TypeError("`base_url` is not a string!")
-        
-        self.base_url = base_url.removesuffix("/")
+        if not base_url.endswith("/"): base_url += "/"
+        self.base_url = base_url
         self.session = session()
         self.session.headers.update({
             "Authorization": self._get_auth(**auth_kwargs),
             "Accept": "application/json"
         })
-        # This specifically targets servicem8 that likes to return
-        # created object's uuids through the headers 😭
-        self.REUQEST_INJECT_HEADERS: list[str] = []
     
     def _get_auth(
             self,
@@ -51,6 +45,8 @@ class BaseAPIClient:
         method: str,
         endpoint: str,
         *,
+        delete_empty: bool = True,
+        use_quote_plus: bool = False,
         return_headers: Literal[True],
         params: dict[str, Any] | None = None,
         json: dict[str, Any] | None = None,
@@ -65,6 +61,8 @@ class BaseAPIClient:
         method: str,
         endpoint: str,
         *,
+        delete_empty: bool = True,
+        use_quote_plus: bool = False,
         return_headers: Literal[False] = ...,
         params: dict[str, Any] | None = None,
         json: dict[str, Any] | None = None,
@@ -78,6 +76,8 @@ class BaseAPIClient:
             method: str,
             endpoint: str,
             *,
+            delete_empty: bool = True,
+            use_quote_plus: bool = False,
             return_headers: bool = False,
             params: dict[str, Any] | None = None,
             json: dict[str, Any] | None = None,
@@ -91,10 +91,31 @@ class BaseAPIClient:
         if the response type is json, or return the content of the
         response if not.
         """
+        url = endpoint.removeprefix("/")
+        if params:
+            if delete_empty:
+                params = {
+                    k: v
+                    for k,v in params.items()
+                    if v is not None
+                }
+            url += "?" + urlencode(
+                query=params,
+                quote_via=quote_plus if use_quote_plus else quote
+            )
+        if delete_empty and json is not None:
+            json = {
+                k: v
+                for k,v in json.items()
+                if v is not None
+            }
         response = self.session.request(
             method = method,
-            url = urljoin(self.base_url, endpoint),
-            params = params,
+            url = urljoin(
+                base=self.base_url,
+                url=url
+            ),
+            # params = params,
             json = json,
             data = data,
             files = files,

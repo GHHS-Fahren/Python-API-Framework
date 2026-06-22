@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import quote
+
 from api_framework.models.servicem8.job_materials import (
     JobMaterialResponse, JobMaterialParams
 )
@@ -21,23 +23,28 @@ def serialise_data(data: JobMaterialParams) -> dict[str, Any]:
         "material_uuid":
             data["material_id"],
         "quantity":
-            str(data["quantity"]),
+            "{:.4f}".format(data["quantity"]),
         "job_material_bundle_uuid":
             data.get("material_bundle_id"),
         "sort_order":
-            str(data.get("sort_order")),
+            None if data.get("cost") is None
+            else str(data.get("sort_order")),
         "name":
             data.get("name"),
         "cost":
-            str(data.get("cost")),
+            None if data.get("cost") is None
+            else str(data.get("cost")),
         "price":
-            str(data.get("price")),
+            None if data.get("price") is None
+            else str(data.get("price")),
         "tax_rate_uuid":
             data.get("tax_rate_id"),
         "displayed_cost":
-            str(data.get("displayed_cost")),
+            None if data.get("displayed_cost") is None
+            else str(data.get("displayed_cost")),
         "displayed_amount":
-            str(data.get("displayed_amount")),
+            None if data.get("displayed_amount") is None
+            else str(data.get("displayed_amount")),
         "displayed_amount_is_tax_inclusive":
             None if is_tax_inclusive is None
             else str(int(is_tax_inclusive))
@@ -52,14 +59,13 @@ class JobMaterialAPI():
     
     def search_materials(
         self,
-        filters: str
+        filters: str|None = None
     ) -> list[JobMaterialResponse]:
+        url = "jobmaterial.json"
+        if filters: url += f"?$filter={quote(filters)}"
         materials = self._api_client.request(
             "GET",
-            "/jobmaterial.json",
-            params = {
-                "filter": filters
-            }
+            url
         )
         return [
             JobMaterialResponse.model_validate(material)
@@ -68,18 +74,17 @@ class JobMaterialAPI():
     
     def iter_search_materials(
         self,
-        filters: str
+        filters: str|None
     ) -> Iterator[JobMaterialResponse]:
         curr_cursor = -1
+        url = "jobmaterial.json"
+        if filters: url += f"?$filter={quote(filters)}"
         while True:
             materials, headers = self._api_client.request(
                 "GET",
-                "/jobmaterial.json",
+                url,
                 return_headers = True,
-                params = {
-                    "filter": filters,
-                    "cursor": curr_cursor
-                }
+                params = {"cursor": curr_cursor}
             )
             curr_cursor = headers.get("x-next-cursor")
             if curr_cursor is None: break
@@ -94,7 +99,7 @@ class JobMaterialAPI():
     ) -> JobMaterialResponse:
         material = self._api_client.request(
             "GET",
-            f"/jobmaterial/{job_material_id}.json"
+            f"jobmaterial/{job_material_id}.json"
         )
         return JobMaterialResponse.model_validate(material)
 
@@ -102,12 +107,9 @@ class JobMaterialAPI():
         self,
         job_material_data: JobMaterialParams
     ) -> JobMaterialResponse:
-        is_tax_inclusive = job_material_data.get(
-            "is_displayed_tax_inclusive"
-        )
         _, headers = self._api_client.request(
             "POST",
-            "/jobmaterial.json",
+            "jobmaterial.json",
             return_headers = True,
             json = serialise_data(job_material_data)
         )
@@ -120,15 +122,13 @@ class JobMaterialAPI():
         job_material_id: str,
         job_material_data: JobMaterialParams
     ) -> JobMaterialResponse:
-        _, headers = self._api_client.request(
+        _ = self._api_client.request(
             "POST",
-            f"/jobmaterial/{job_material_id}.json",
+            f"jobmaterial/{job_material_id}.json",
             return_headers = True,
             json = serialise_data(job_material_data)
         )
-        return self.get_job_material(
-            headers["x-record-uuid"]
-        )
+        return self.get_job_material(job_material_id)
     
     def delete_job_material(
         self,
@@ -136,6 +136,6 @@ class JobMaterialAPI():
     ) -> bool:
         ret = self._api_client.request(
             "DELETE",
-            f"/jobmaterial/{job_material_id}.json"
+            f"jobmaterial/{job_material_id}.json"
         )
         return ret["message"] == "OK"

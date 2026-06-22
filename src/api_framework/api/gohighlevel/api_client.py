@@ -4,6 +4,8 @@ from .objects import CustomObjectRecordAPI
 from .relations import RelationsAPI
 from .sub_account import CustomFieldAPI
 from .messages import MessagesAPI
+from .estimates import EstimatesAPI
+from .opportunities import OpportunitiesAPI
 
 
 
@@ -27,6 +29,8 @@ class GHLClient(BaseAPIClient):
         self.relations = RelationsAPI(self)
         self.custom_fields = CustomFieldAPI(self)
         self.messages = MessagesAPI(self)
+        self.estimates = EstimatesAPI(self)
+        self.opportunities = OpportunitiesAPI(self)
     
     def _get_auth(
             self,
