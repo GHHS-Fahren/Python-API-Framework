@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import urlencode, quote
+
 from api_framework.models.gohighlevel.relations import RelationResponse
 
 from typing import TYPE_CHECKING
@@ -44,15 +46,23 @@ class RelationsAPI():
         limit: int = 20,
         association_ids: list[str]|None = None
     ) -> list[RelationResponse]:
-        relations = self._api_client.request(
-            "GET",
-            f"/associations/relations/{record_id}",
-            params = {
+        encoded_params = urlencode(
+            query = {
                 "locationId": self._api_client.location_id,
                 "skip": skip,
                 "limit": limit,
-                "associationIds": ",".join(association_ids)
-            }
+            },
+            quote_via = quote
+        )
+        if association_ids:
+            new_ids = [
+                quote(string=i)
+                for i in association_ids
+            ]
+            encoded_params += f"&associationIds={','.join(new_ids)}"
+        relations = self._api_client.request(
+            "GET",
+            f"associations/relations/{record_id}?{encoded_params}"
         )["relations"]
         return [
             RelationResponse.model_validate(i)

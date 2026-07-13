@@ -24,17 +24,18 @@ class RelationResponse(BaseModel):
     def validate_objects(
         cls,
         data: dict[str, str]
-    ) -> dict[str, str]:
+    ) -> dict[str, str|dict[str,str]]:
         """
         Converts the first and second object data to a structure that
         pydantic can parse to the sub classes
         """
-        data["first_object"] = {
-            "id": data.pop("firstRecordId"),
-            "key": data.pop("firstObjectKey")
+        new_data = {**data}
+        new_data["first_object"] = {
+            "id": new_data.pop("firstRecordId"),
+            "key": new_data.pop("firstObjectKey")
         }
-        data["second_object"] = {
-            "id": data.pop("secondRecordId"),
-            "key": data.pop("secondObjectKey")
+        new_data["second_object"] = {
+            "id": new_data.pop("secondRecordId"),
+            "key": new_data.pop("secondObjectKey")
         }
-        return data
+        return new_data

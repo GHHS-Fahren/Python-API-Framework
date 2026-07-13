@@ -11,8 +11,22 @@ from .opportunities import OpportunitiesAPI
 
 class GHLClient(BaseAPIClient):
     """
-    Client class for interacting with the GoHighLevel API.
+    The client class for interacting with the GoHighLevel API. Init
+    requires the base api url, the location id that the client will be
+    working in, and the token string without the "Bearer " at the
+    start. If a cross location automation is needed, initiate two
+    clients in different variables. The individual endpoints are
+    exposed via variables in the class.
     """
+
+    location_id: str
+    forms: FormAPI
+    records: CustomObjectRecordAPI
+    relations: RelationsAPI
+    custom_fields: CustomFieldAPI
+    messages: MessagesAPI
+    estimates: EstimatesAPI
+    opportunities: OpportunitiesAPI
 
     def __init__(
         self,

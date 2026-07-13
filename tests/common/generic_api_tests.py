@@ -73,7 +73,7 @@ class BaseApiEndpointTests:
         self,
         url: str
     ) -> dict[str, str]:
-        params = url.split("?")[-1]
+        params = url.split("?",1)[-1]
         
         ret_dict = {}
         for i in params.split("&"):
@@ -124,12 +124,12 @@ class BaseApiEndpointTests:
     def request_test(self, request, expected) -> None:
         if "params" in expected:
             assert request.url.split("?")[0] == expected["url"]
-            debug = self._parse_params(request.url)
+            # debug = self._parse_params(request.url)
             assert self._parse_params(request.url)==expected["params"]
         else:
             assert request.url == expected["url"]
         if "json" in expected:
-            debug = loads(request.body)
+            # debug = loads(request.body)
             assert loads(request.body) == expected["json"]
         elif "body" in expected:
             assert request.body == expected["body"]

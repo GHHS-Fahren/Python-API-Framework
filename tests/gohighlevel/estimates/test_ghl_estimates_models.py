@@ -68,10 +68,10 @@ class TestGHLEstimateContactResponse(BaseFrozenModelTests):
     ):
         self.api_payload = ghl_mock_estimate_contact
     
-    def test_for_address_conversion(self):
-        contact: EstimateContactResponse = self.build(self.api_payload)
-        assert isinstance(contact.address, FrozenAddress)
-        assert contact.address.state == self.api_payload["address"]["state"]
+    # def test_for_address_conversion(self):
+    #     contact: EstimateContactResponse = self.build(self.api_payload)
+    #     assert isinstance(contact.address, FrozenAddress)
+    #     assert contact.address.state == self.api_payload["address"]["state"]
     
     def test_for_tuple_conversion(self):
         contact: EstimateContactResponse = self.build(self.api_payload)

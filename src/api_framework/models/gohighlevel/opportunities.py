@@ -21,6 +21,7 @@ class OpportunityParams(TypedDict):
     forecast_probability: float|None
     assigned_to: str|None
     lost_reason_id: str|None
+    custom_fields: list[dict[str, Any]]|None
 
 class OpportunityContactResponse(BaseModel):
     model_config = ConfigDict(frozen = True)
@@ -73,7 +74,7 @@ class OpportunityResponse(BaseModel):
         default=None,
         validation_alias="lastActionDate"
     )
-    index_version: Optional[str] = Field(
+    index_version: Optional[int] = Field(
         default=None,
         validation_alias="indexVersion"
     )
@@ -129,10 +130,10 @@ class OpportunityResponse(BaseModel):
         default=None,
         validation_alias="lostReasonId"
     )
-    # custom_fields: tuple[Mapping[str, Any], ...] = Field(
-    #     default_factory=tuple,
-    #     validation_alias="customFields"
-    # )
+    custom_fields: tuple[Mapping[str, Any], ...] = Field(
+        default_factory=tuple,
+        validation_alias="customFields"
+    )
     followers: tuple[str, ...] = Field(default_factory=tuple)
     external_object_id: Optional[str] = Field(
         default=None,

@@ -45,7 +45,7 @@ def sm8_mock_job() -> dict[str, str|int|float]:
         "job_address": "8/24-26 Hancock Way,\nBaringa QLD 4551",
         "job_description": "",
         "work_done_description": "",
-        "generated_job_id": "558",
+        "generated_job_id": "SM558",
         "total_invoice_amount": "5.5000",
         "payment_processed": 0,
         "payment_processed_stamp": "2026-03-01 12:00:00",

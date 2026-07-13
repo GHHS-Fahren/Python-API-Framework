@@ -2,26 +2,26 @@ from pydantic import BaseModel, ConfigDict, Field, field_serializer, \
     field_validator
 from datetime import datetime
 
-from typing import Literal, Optional, TypedDict, Any
+from typing import Literal, Optional, TypedDict, Any, NotRequired
 
 
 
 is_none = lambda v: v is None
 
 class CreateEmailParams(TypedDict):
-    appointment_id: Optional[str]
-    attachments: Optional[list[str]]
-    email_from: Optional[str]
-    email_to: Optional[str]
-    email_cc: Optional[list[str]]
-    email_bcc: Optional[list[str]]
-    subject: Optional[str]
-    html: Optional[str]
-    email_reply_mode: Optional[Literal["reply", "reply_all"]]
-    reply_message_id: Optional[str]
-    template_id: Optional[str]
-    thread_id: Optional[str]
-    scheduled_timestamp: Optional[datetime]
+    appointment_id: NotRequired[str]
+    attachments: NotRequired[list[str]]
+    email_from: NotRequired[str]
+    email_to: NotRequired[str]
+    email_cc: NotRequired[list[str]]
+    email_bcc: NotRequired[list[str]]
+    subject: NotRequired[str]
+    html: NotRequired[str]
+    email_reply_mode: NotRequired[Literal["reply", "reply_all"]]
+    reply_message_id: NotRequired[str]
+    template_id: NotRequired[str]
+    thread_id: NotRequired[str]
+    scheduled_timestamp: NotRequired[datetime]
 
 class CreateMessageRequest(BaseModel):
     model_config = ConfigDict(

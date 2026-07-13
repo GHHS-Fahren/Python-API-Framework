@@ -48,11 +48,6 @@ class TestSM8JobResponse(BaseFrozenModelTests):
         job: JobResponse = self.build(self.api_payload)
         assert isinstance(job.is_address_valid, bool)
         assert job.is_address_valid == True
-    
-    def test_for_number_conversion(self):
-        job: JobResponse = self.build(self.api_payload)
-        assert isinstance(job.number, int)
-        assert job.number == 558
 
     def test_for_float_conversion(self):
         job: JobResponse = self.build(self.api_payload)

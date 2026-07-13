@@ -24,7 +24,7 @@ class TestGHLGetOpportunity(BaseApiEndpointTests):
         self.endpoint_base = GHL_API_ENDPOINT
         self.func_reference = ghl_client.opportunities.get_opportunity
         self.func_kwargs = {
-            "opportunity_id": "1234abcd5678efgh9012ijkl"
+            "opportunity_id": ghl_mock_opportunity_single_ret["opportunity"]["id"]
         }
         self.expected_requests = [{
             "url": self.build_url(GET_OPPORTUNITY_URL)

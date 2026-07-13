@@ -36,6 +36,7 @@ class TestGHLSearchEstimates(BaseApiEndpointTests):
             "end_at": end_at,
             "search": "test search",
             "contact_id": "6a2794b8dc7eb330de33361a",
+            "opportunity_id": "6a2794b8dc7eb330de33361a",
             "status": "all"
         }
         self.expected_requests = [{
@@ -47,6 +48,7 @@ class TestGHLSearchEstimates(BaseApiEndpointTests):
                 "endAt": end_at.strftime("%Y-%m-%d"),
                 "search": quote(self.func_kwargs["search"]),
                 "contactId": self.func_kwargs["contact_id"],
+                "opportunityId": self.func_kwargs["opportunity_id"],
                 "status": "all",
                 "limit": self.func_kwargs["limit"],
                 "offset": self.func_kwargs["offset"]

@@ -67,8 +67,9 @@ class EstimateContactResponse(BaseModel):
         validation_alias = "additionalEmails"
     )
     address: FrozenAddress
+    # address: dict[str, str]
     # This is a dict of an unknown format so it has to be disabled
-    # otherwise the hashable tests fail, hasbnt been used once in a
+    # otherwise the hashable tests fail, hasnt been used once in a
     # request of 200 invoices soooooo
     # custom_fields: Annotated[
     #     tuple[Any, ...],
@@ -76,6 +77,21 @@ class EstimateContactResponse(BaseModel):
     # ] = Field(
     #     validation_alias = "customFields"
     # )
+
+    @model_validator(mode="before")
+    def merge_address(
+        cls,
+        data: dict[str, Any]
+    ) -> dict[str, Any]:
+        new_data = {**data}
+        address_data: dict[str, str] = new_data.pop("address")
+        new_address = " ".join([
+            address_data["addressLine1"]+",",
+            address_data["city"],
+            address_data["state"],
+            address_data["postalCode"]
+        ])
+        return {**data, "address": {"full_address": new_address}}
 
 class EstimateResponse(BaseModel):
     model_config = ConfigDict(frozen=True)

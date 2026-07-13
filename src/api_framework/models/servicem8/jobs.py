@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, model_validator, \
     field_validator
 from datetime import datetime
-from json import loads
+# from json import loads
 
 from api_framework.models.common.address import FrozenAddress
 from api_framework.utils.model_validations import model_del_empty_str
@@ -14,7 +14,7 @@ class JobParams(TypedDict):
     company: str|None
     category: str|None
     queue: str|None
-    status: Literal["Quote","Work Order","Unsuccessful","Completed"]
+    status: Literal["Quote","Work Order","Unsuccessful","Completed"]|None
     address: FrozenAddress|None
     billing_address: str|None
     description: str|None
@@ -29,7 +29,7 @@ class JobResponse(BaseModel):
     id: str = Field(
         validation_alias = "uuid"
     )
-    number: int = Field(
+    number: str = Field(
         validation_alias = "generated_job_id"
     )
     is_active: bool = Field(
@@ -200,17 +200,6 @@ class JobResponse(BaseModel):
         return int(boolean) == 1
     
     @field_validator(
-        "number",
-        mode = "before"
-    )
-    @classmethod
-    def validate_number(
-        cls,
-        number: str
-    ) -> int:
-        return int(number)
-    
-    @field_validator(
         "invoice_amount",
         mode = "before"
     )
@@ -221,15 +210,15 @@ class JobResponse(BaseModel):
     ) -> float:
         return float(amount)
 
-    @field_validator(
-        "badges",
-        mode = "before"
-    )
-    @classmethod
-    def validate_badges(
-        cls,
-        badges: str
-    ) -> tuple[str, ...]|None:
-        badge_list = tuple(loads(badges))
-        if len(badge_list) == 0: return None
-        return badge_list
+    # @field_validator(
+    #     "badges",
+    #     mode = "before"
+    # )
+    # @classmethod
+    # def validate_badges(
+    #     cls,
+    #     badges: str
+    # ) -> tuple[str, ...]|None:
+    #     badge_list = tuple(loads(badges))
+    #     if len(badge_list) == 0: return None
+    #     return badge_list

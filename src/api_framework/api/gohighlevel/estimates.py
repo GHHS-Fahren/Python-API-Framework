@@ -14,6 +14,18 @@ if TYPE_CHECKING:
 
 
 class EstimatesAPI():
+    """
+    The client class for interacting with the estimates api endpoints.
+    Currently it has support for:
+     - Searching estimates
+     - Iterably searching estimates
+     - Getting an estimate
+     - Searching estimate templates
+     - Getting an estimate template
+    """
+
+    _api_client: GHLClient
+
     def __init__(
         self,
         api_client: GHLClient
@@ -29,6 +41,7 @@ class EstimatesAPI():
         end_at: datetime|None = None,
         search: str|None = None,
         contact_id: str|None = None,
+        opportunity_id: str|None = None,
         status: Literal[
             "all", "draft", "sent",
             "accepted", "declined",
@@ -50,6 +63,7 @@ class EstimatesAPI():
                 "search": search,
                 "status": status,
                 "contactId": contact_id,
+                "opportunityId": opportunity_id,
                 "limit": limit,
                 "offset": offset
             },
@@ -59,6 +73,42 @@ class EstimatesAPI():
             EstimateResponse.model_validate(i)
             for i in estimates
         ]
+    
+    def iter_search_estimates(
+        self,
+        *,
+        # limit: int|None = 20,
+        # offset: int|None = 0,
+        start_at: datetime|None = None,
+        end_at: datetime|None = None,
+        search: str|None = None,
+        contact_id: str|None = None,
+        opportunity_id: str|None = None,
+        status: Literal[
+            "all", "draft", "sent",
+            "accepted", "declined",
+            "invoiced", "viewed"
+        ]|None = None
+    ) -> Iterator[EstimateResponse]:
+        offset = 0
+        limit = 1000
+        while True:
+            estimates = self.search_estimates(
+                limit=limit,
+                offset=offset,
+                start_at=start_at,
+                end_at=end_at,
+                search=search,
+                contact_id=contact_id,
+                opportunity_id=opportunity_id,
+                status=status
+            )
+            if not estimates: break
+            yield from [
+                EstimateResponse.model_validate(i)
+                for i in estimates
+            ]
+            offset += limit
     
     def get_estimate(
         self,
