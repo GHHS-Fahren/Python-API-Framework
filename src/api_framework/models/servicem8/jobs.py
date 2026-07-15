@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, model_validator, \
     field_validator
 from datetime import datetime
-# from json import loads
+from json import loads
 
 from api_framework.models.common.address import FrozenAddress
 from api_framework.utils.model_validations import model_del_empty_str
@@ -210,15 +210,16 @@ class JobResponse(BaseModel):
     ) -> float:
         return float(amount)
 
-    # @field_validator(
-    #     "badges",
-    #     mode = "before"
-    # )
-    # @classmethod
-    # def validate_badges(
-    #     cls,
-    #     badges: str
-    # ) -> tuple[str, ...]|None:
-    #     badge_list = tuple(loads(badges))
-    #     if len(badge_list) == 0: return None
-    #     return badge_list
+    @field_validator(
+        "badges",
+        mode = "before"
+    )
+    @classmethod
+    def validate_badges(
+        cls,
+        badges: str
+    ) -> tuple[str, ...]|None:
+        if len(badges) == 0: return None
+        badge_list = tuple(loads(badges))
+        if len(badge_list) == 0: return None
+        return badge_list

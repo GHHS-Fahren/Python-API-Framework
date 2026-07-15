@@ -2,6 +2,7 @@ from api_framework.core.generic_client import BaseAPIClient
 from .company_contact import CompanyContactAPI
 from .job_materials import JobMaterialAPI
 from .jobs import JobsAPI
+from .notes import NotesAPI
 
 
 
@@ -17,6 +18,7 @@ class SM8Client(BaseAPIClient):
         self.company_contacts= CompanyContactAPI(self)
         self.job_materials = JobMaterialAPI(self)
         self.jobs = JobsAPI(self)
+        self.notes = NotesAPI(self)
     
     def _get_auth(
         self,
