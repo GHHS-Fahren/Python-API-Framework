@@ -37,6 +37,7 @@ class OpportunitiesAPI():
             "/opportunities/upsert",
             json = {
                 "id": opportunity_id,
+                "contactId": opportunity_data["contact_id"],
                 "pipelineId": opportunity_data.get("pipeline_id"),
                 "locationId": self._api_client.location_id,
                 "followers": opportunity_data.get("followers"),
@@ -60,12 +61,14 @@ class OpportunitiesAPI():
     def update_opportunity(
         self,
         opportunity_id: str,
+        contact_id: str,
         opportunity_data: OpportunityParams
     ) -> OpportunityResponse:
         return self.upsert_opportunity(
             opportunity_id = opportunity_id,
             opportunity_data = {
                 **opportunity_data,
-                "opportunity_id": opportunity_id
+                "opportunity_id": opportunity_id,
+                "contact_id": contact_id
             }
         )

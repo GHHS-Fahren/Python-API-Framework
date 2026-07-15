@@ -39,8 +39,8 @@ def ghl_mock_estimate_item(
         "currency": "DOUBLOONS",
         "productId": "1234abcd5678efgh9012ijkl",
         "priceId": "1234abcd5678efgh9012ijkl",
-        "amount": 899,
-        "qty": 5,
+        "amount": 899.2,
+        "qty": 5.8,
         "name": "Example Name",
         "type": "one_time"
     }
@@ -130,7 +130,7 @@ def ghl_mock_estimate(
         "estimateActionHistory": [],
         "frequencySettings": {"enabled": False},
         "estimateNumberPrefix": "ESTIMATE-",
-        "total": 899,
+        "total": 899.3,
         "totalamountInUSD": 5137.4864,
         "attachments": [ghl_mock_attachment for _ in range(5)],
         "autoInvoice": {

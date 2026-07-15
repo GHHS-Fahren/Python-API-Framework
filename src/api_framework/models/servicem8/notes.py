@@ -34,7 +34,9 @@ class NoteResponse(BaseModel):
         validation_alias = "edit_by_staff_uuid"
     )
     related_object: str
-    related_object_id: str
+    related_object_id: str = Field(
+        validation_alias = "related_object_uuid"
+    )
     note: str
     is_action_required: Annotated[
         bool,

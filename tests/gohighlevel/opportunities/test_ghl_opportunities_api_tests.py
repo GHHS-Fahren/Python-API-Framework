@@ -70,6 +70,7 @@ class TestGHLUpdateOpportunity(BaseApiEndpointTests):
         self.func_reference = ghl_client.opportunities.update_opportunity
         self.func_kwargs = {
             "opportunity_id": "1234abcd5678efgh9012ijkl",
+            "contact_id": "1234abcd5678efgh9012ijkl",
             "opportunity_data": {
                 "pipeline_id": "1234abcd5678efgh9012ijkl",
                 "pipeline_stage_id": "1234abcd5678efgh9012ijkl"
@@ -80,6 +81,7 @@ class TestGHLUpdateOpportunity(BaseApiEndpointTests):
             "json": {
                 "locationId": GHL_API_LOCATION,
                 "id": self.func_kwargs["opportunity_id"],
+                "contactId": self.func_kwargs["contact_id"],
                 "pipelineId": self.func_kwargs["opportunity_data"]["pipeline_id"],
                 "pipelineStageId": self.func_kwargs["opportunity_data"]["pipeline_stage_id"]
             }

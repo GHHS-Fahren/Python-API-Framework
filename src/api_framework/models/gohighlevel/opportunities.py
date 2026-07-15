@@ -3,25 +3,26 @@ from datetime import datetime
 
 from api_framework.utils.deep_freeze import deep_freeze
 
-from typing import Mapping, Any, Optional, Literal, TypedDict
+from typing import Mapping, Any, Optional, Literal, TypedDict, NotRequired
 
 
 
 class OpportunityParams(TypedDict):
-    opportunity_id: str|None
-    pipeline_id: str|None
-    pipeline_stage_id: str|None
-    followers: list[str]|None
-    is_remove_all_followers: bool|None
-    followers_action_type: str|None
-    name: str|None
-    status: Literal["open", "won", "lost", "abandoned", "all"]|None
-    value: float|None
-    forecast_expected_close_date: datetime|None
-    forecast_probability: float|None
-    assigned_to: str|None
-    lost_reason_id: str|None
-    custom_fields: list[dict[str, Any]]|None
+    opportunity_id: NotRequired[str]
+    pipeline_id: NotRequired[str]
+    contact_id: str
+    pipeline_stage_id: NotRequired[str]
+    followers: NotRequired[list[str]]
+    is_remove_all_followers: NotRequired[bool]
+    followers_action_type: NotRequired[str]
+    name: NotRequired[str]
+    status: NotRequired[Literal["open", "won", "lost", "abandoned", "all"]]
+    value: NotRequired[float]
+    forecast_expected_close_date: NotRequired[datetime]
+    forecast_probability: NotRequired[float]
+    assigned_to: NotRequired[str]
+    lost_reason_id: NotRequired[str]
+    custom_fields: NotRequired[list[dict[str, Any]]]
 
 class OpportunityContactResponse(BaseModel):
     model_config = ConfigDict(frozen = True)
@@ -112,8 +113,7 @@ class OpportunityResponse(BaseModel):
         default=None,
         validation_alias="effectiveProbability"
     )
-    contact_id: Optional[str] = Field(
-        default=None,
+    contact_id: str = Field(
         validation_alias="contactId"
     )
     location_id: str = Field(

@@ -42,8 +42,8 @@ class EstimateItemsResponse(BaseModel):
     price_id: str = Field(
         validation_alias = "priceId"
     )
-    amount: int
-    quantity: int = Field(
+    amount: float
+    quantity: float = Field(
         validation_alias = "qty"
     )
     name: str
@@ -150,7 +150,7 @@ class EstimateResponse(BaseModel):
     # frequency_settings: Mapping[str, Any] = Field(
     #     validation_alias = "frequencySettings"
     # )
-    total: int
+    total: float
     attachments: tuple[RemoteFile, ...]
     # auto_invoice: Mapping[str, Any] = Field(
     #     validation_alias = "autoInvoice"
@@ -235,7 +235,7 @@ class EstimateTemplateResponse(BaseModel):
         validation_alias = "updatedBy"
     )
     currency: str
-    total: int
+    total: float
     attachments: tuple[RemoteFile, ...]
     # configuration: Mapping[str, Any]
     created_at: datetime = Field(

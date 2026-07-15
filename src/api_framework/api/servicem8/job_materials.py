@@ -76,15 +76,15 @@ class JobMaterialAPI():
         self,
         filters: str|None
     ) -> Iterator[JobMaterialResponse]:
+        raise NotImplementedError("Function doesnt work for some reason dont use :/")
         curr_cursor = -1
         url = "jobmaterial.json"
         if filters: url += f"?$filter={quote(filters)}"
         while True:
             materials, headers = self._api_client.request(
                 "GET",
-                url,
-                return_headers = True,
-                params = {"cursor": curr_cursor}
+                url + f"&cursor={curr_cursor}",
+                return_headers = True
             )
             curr_cursor = headers.get("x-next-cursor")
             if curr_cursor is None: break
