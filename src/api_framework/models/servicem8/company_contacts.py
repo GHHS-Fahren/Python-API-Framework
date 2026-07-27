@@ -40,5 +40,8 @@ class CompanyContactResponse(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def del_empty_str(cls, data) -> dict[str, Any]:
+    def del_empty_str(
+        cls,
+        data: dict[str, Any]
+    ) -> dict[str, Any]:
         return model_del_empty_str(data)

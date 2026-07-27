@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_serializer, \
     field_validator
 from datetime import datetime
 
-from typing import Literal, Optional, TypedDict, Any, NotRequired
+from typing import Literal, TypedDict, NotRequired
 
 
 
@@ -36,92 +36,92 @@ class CreateMessageRequest(BaseModel):
         serialization_alias = "contactId"
     )
     status: Literal["delivered", "failed", "pending", "read"]
-    appointment_id: Optional[str] = Field(
+    appointment_id: str|None = Field(
         default = None,
         serialization_alias = "appointmentId",
         exclude_if = is_none
     )
-    attachments: Optional[list[str]] = Field(
+    attachments: list[str]|None = Field(
         default = None,
         exclude_if = is_none
     )
-    email_from: Optional[str] = Field(
+    email_from: str|None = Field(
         default = None,
         serialization_alias = "emailFrom",
         exclude_if = is_none
     )
-    email_to: Optional[str] = Field(
+    email_to: str|None = Field(
         default = None,
         serialization_alias = "emailTo",
         exclude_if = is_none
     )
-    email_cc: Optional[list[str]] = Field(
+    email_cc: list[str]|None = Field(
         default = None,
         serialization_alias = "emailCc",
         exclude_if = is_none
     )
-    email_bcc: Optional[list[str]] = Field(
+    email_bcc: list[str]|None = Field(
         default = None,
         serialization_alias = "emailBcc",
         exclude_if = is_none
     )
-    html: Optional[str] = Field(
+    html: str|None = Field(
         default = None,
         exclude_if = is_none
     )
-    message: Optional[str] = Field(
+    message: str|None = Field(
         default = None,
         exclude_if = is_none
     )
-    subject: Optional[str] = Field(
+    subject: str|None = Field(
         default = None,
         exclude_if = is_none
     )
-    email_reply_mode: Optional[Literal["reply", "reply_all"]] = Field(
+    email_reply_mode: Literal["reply", "reply_all"]|None = Field(
         default = None,
         serialization_alias = "emailReplyMode",
         exclude_if = is_none
     )
-    reply_message_id: Optional[str] = Field(
+    reply_message_id: str|None = Field(
         default = None,
         serialization_alias = "replyMessageId",
         exclude_if = is_none
     )
-    template_id: Optional[str] = Field(
+    template_id: str|None = Field(
         default = None,
         serialization_alias = "templateId",
         exclude_if = is_none
     )
-    thread_id: Optional[str] = Field(
+    thread_id: str|None = Field(
         default = None,
         serialization_alias = "threadId",
         exclude_if = is_none
     )
-    scheduled_timestamp: Optional[datetime] = Field(
+    scheduled_timestamp: datetime|None = Field(
         default = None,
         serialization_alias = "scheduledTimestamp",
         exclude_if = is_none
     )
-    conversation_provider_id: Optional[str] = Field(
+    conversation_provider_id: str|None = Field(
         default = None,
         serialization_alias = "conversationProviderId",
         exclude_if = is_none
     )
-    from_number: Optional[str] = Field(
+    from_number: str|None = Field(
         default = None,
         serialization_alias = "fromNumber",
         exclude_if = is_none
     )
-    to_number: Optional[str] = Field(
+    to_number: str|None = Field(
         default = None,
         serialization_alias = "toNumber",
         exclude_if = is_none
     )
-    mentions: Optional[list[str]] = Field(
+    mentions: list[str]|None = Field(
         default = None,
         exclude_if = is_none
     )
-    user_id: Optional[str] = Field(
+    user_id: str|None = Field(
         default = None,
         serialization_alias = "userId",
         exclude_if = is_none
@@ -145,15 +145,15 @@ class CreateMessageResponse(BaseModel):
     message_id: str = Field(
         validation_alias = "messageId",
     )
-    email_message_id: Optional[str] = Field(
+    email_message_id: str|None = Field(
         default = None,
         validation_alias = "emailMessageId",
     )
-    message_ids: Optional[tuple[str, ...]] = Field(
+    message_ids: tuple[str, ...]|None = Field(
         default = None,
         validation_alias = "messageIds",
     )
-    msg: Optional[str] = Field(
+    msg: str|None = Field(
         default = None,
     )
 

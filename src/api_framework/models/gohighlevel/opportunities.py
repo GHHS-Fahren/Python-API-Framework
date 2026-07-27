@@ -1,9 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from datetime import datetime
 
-from api_framework.utils.deep_freeze import deep_freeze
-
-from typing import Mapping, Any, Optional, Literal, TypedDict, NotRequired
+from typing import Any, Literal, TypedDict, NotRequired
 
 
 
@@ -47,7 +45,7 @@ class OpportunityResponse(BaseModel):
 
     id: str
     name: str
-    value: Optional[float] = Field(
+    value: float|None = Field(
         default=None,
         validation_alias="monetaryValue"
     )
@@ -57,25 +55,25 @@ class OpportunityResponse(BaseModel):
     pipeline_stage_id: str = Field(
         validation_alias="pipelineStageId"
     )
-    assigned_to: Optional[str] = Field(
+    assigned_to: str|None = Field(
         default=None,
         validation_alias="assignedTo"
     )
     status: str
-    source: Optional[str] = None
-    last_status_change_at: Optional[datetime] = Field(
+    source: str|None = None
+    last_status_change_at: datetime|None = Field(
         default=None,
         validation_alias="lastStatusChangeAt"
     )
-    last_stage_change_at: Optional[datetime] = Field(
+    last_stage_change_at: datetime|None = Field(
         default=None,
         validation_alias="lastStageChangeAt"
     )
-    last_action_date: Optional[datetime] = Field(
+    last_action_date: datetime|None = Field(
         default=None,
         validation_alias="lastActionDate"
     )
-    index_version: Optional[int] = Field(
+    index_version: int|None = Field(
         default=None,
         validation_alias="indexVersion"
     )
@@ -85,31 +83,31 @@ class OpportunityResponse(BaseModel):
     updated_at: datetime = Field(
         validation_alias="updatedAt"
     )
-    forecast_expected_close_date: Optional[datetime] = Field(
+    forecast_expected_close_date: datetime|None = Field(
         default=None,
         validation_alias="forecastExpectedCloseDate"
     )
-    forecast_original_close_date: Optional[datetime] = Field(
+    forecast_original_close_date: datetime|None = Field(
         default=None,
         validation_alias="forecastOriginalCloseDate"
     )
-    forecast_slippage_count: Optional[int] = Field(
+    forecast_slippage_count: int|None = Field(
         default=None,
         validation_alias="forecastSlippageCount"
     )
-    forecast_days_slipped: Optional[int] = Field(
+    forecast_days_slipped: int|None = Field(
         default=None,
         validation_alias="forecastDaysSlipped"
     )
-    forecast_last_slipped_at: Optional[datetime] = Field(
+    forecast_last_slipped_at: datetime|None = Field(
         default=None,
         validation_alias="forecastLastSlippedAt"
     )
-    forecast_probability: Optional[float] = Field(
+    forecast_probability: float|None = Field(
         default=None,
         validation_alias="forecastProbability"
     )
-    effective_probability: Optional[float] = Field(
+    effective_probability: float|None = Field(
         default=None,
         validation_alias="effectiveProbability"
     )
@@ -119,23 +117,23 @@ class OpportunityResponse(BaseModel):
     location_id: str = Field(
         validation_alias="locationId"
     )
-    contact: Optional[OpportunityContactResponse] = None
+    contact: OpportunityContactResponse|None = None
     notes: tuple[Any, ...] = Field(default_factory=tuple)
     tasks: tuple[Any, ...] = Field(default_factory=tuple)
     calendar_events: tuple[Any, ...] = Field(
         default_factory=tuple,
         validation_alias="calendarEvents"
     )
-    lost_reason_id: Optional[str] = Field(
+    lost_reason_id: str|None = Field(
         default=None,
         validation_alias="lostReasonId"
     )
-    custom_fields: tuple[Mapping[str, Any], ...] = Field(
+    custom_fields: tuple[dict[str, Any], ...] = Field(
         default_factory=tuple,
         validation_alias="customFields"
     )
     followers: tuple[str, ...] = Field(default_factory=tuple)
-    external_object_id: Optional[str] = Field(
+    external_object_id: str|None = Field(
         default=None,
         validation_alias="externalObjectId"
     )
@@ -155,17 +153,17 @@ class OpportunityResponse(BaseModel):
     ) -> datetime:
         return datetime.fromisoformat(value)
 
-    @field_validator(
-        "notes", "tasks", "calendar_events",
-        "followers",
-        mode="before"
-    )
-    @classmethod
-    def validate_freezable(
-        cls,
-        value: Any
-    ) -> Any:
-        """
-        Deep-freezes mapping fields to preserve model immutability.
-        """
-        return deep_freeze(value)
+    # @field_validator(
+    #     "notes", "tasks", "calendar_events",
+    #     "followers",
+    #     mode="before"
+    # )
+    # @classmethod
+    # def validate_freezable(
+    #     cls,
+    #     value: Any
+    # ) -> Any:
+    #     """
+    #     Deep-freezes mapping fields to preserve model immutability.
+    #     """
+    #     return deep_freeze(value)

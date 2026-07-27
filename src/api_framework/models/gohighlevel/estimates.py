@@ -6,7 +6,6 @@ from api_framework.models.common.address import FrozenAddress
 from api_framework.models.common.file_models import RemoteFile
 from api_framework.utils.deep_freeze import deep_freeze
 
-from collections.abc import Mapping
 from typing import Any, Annotated
 
 

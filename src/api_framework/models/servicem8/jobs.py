@@ -6,20 +6,20 @@ from json import loads
 from api_framework.models.common.address import FrozenAddress
 from api_framework.utils.model_validations import model_del_empty_str
 
-from typing import Literal, TypedDict, Any
+from typing import Literal, NotRequired, TypedDict, Any
 
 
 
 class JobParams(TypedDict):
-    company: str|None
-    category: str|None
-    queue: str|None
-    status: Literal["Quote","Work Order","Unsuccessful","Completed"]|None
-    address: FrozenAddress|None
-    billing_address: str|None
-    description: str|None
-    work_done: str|None
-    badges: tuple[str, ...]|None
+    company: NotRequired[str]
+    category: NotRequired[str]
+    queue: NotRequired[str]
+    status: NotRequired[Literal["Quote","Work Order","Unsuccessful","Completed"]]
+    address: NotRequired[FrozenAddress]
+    billing_address: NotRequired[str]
+    description: NotRequired[str]
+    work_done: NotRequired[str]
+    badges: NotRequired[tuple[str, ...]]
 
 class JobResponse(BaseModel):
     model_config = ConfigDict(
@@ -145,7 +145,10 @@ class JobResponse(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def del_empty_str(cls, data) -> dict[str, Any]:
+    def del_empty_str(
+        cls,
+        data: dict[str, Any]
+    ) -> dict[str, Any]:
         return model_del_empty_str(data)
 
     @model_validator(mode="before")

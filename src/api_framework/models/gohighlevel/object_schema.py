@@ -6,11 +6,11 @@
 
 from pydantic import BaseModel, field_validator, model_validator, Field, AliasPath
 from datetime import datetime
-from typing import Literal
+from typing import Literal, TypeAlias
 from typing_extensions import Self
 
 class SchemaField(BaseModel):
-    _ACCEPTABLE_FILES = Literal[
+    _ACCEPTABLE_FILES: TypeAlias = Literal[
         ".pdf", ".xlsx", ".xls", ".csv", ".jpeg",
         ".jpg", ".docx", ".doc", ".gif", ".png"
     ]
@@ -41,7 +41,7 @@ class SchemaField(BaseModel):
             raise ValueError("Choice fields must define options")
 
         if self.type == "FILE_UPLOAD" \
-        and not all(self.file_formats, self.file_limit):
+        and not all((self.file_formats, self.file_limit)):
             raise ValueError("File fields must define formats and limit")
         
         return self

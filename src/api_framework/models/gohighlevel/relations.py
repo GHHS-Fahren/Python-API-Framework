@@ -23,7 +23,7 @@ class RelationResponse(BaseModel):
     @classmethod
     def validate_objects(
         cls,
-        data: dict[str, str]
+        data: dict[str, str|dict[str,str]]
     ) -> dict[str, str|dict[str,str]]:
         """
         Converts the first and second object data to a structure that

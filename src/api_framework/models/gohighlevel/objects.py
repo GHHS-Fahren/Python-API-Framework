@@ -1,12 +1,11 @@
 from pydantic import BaseModel, ConfigDict, Field, model_serializer, \
     field_validator
 from datetime import datetime
-from types import MappingProxyType
 
 from api_framework.models.common.file_models import RemoteFile
 from api_framework.utils.deep_freeze import deep_freeze
 
-from typing import Mapping, TypedDict, Optional, Any
+from typing import TypedDict, NotRequired, Any
 
 
 
@@ -14,7 +13,7 @@ def is_file(data: Any) -> bool:
     if not isinstance(data, dict): return False
     return ("meta" in data) and ("url" in data)
 
-def field_to_files(data: list[dict]) -> list[RemoteFile]:
+def field_to_files(data: list[dict[str, Any]]) -> list[RemoteFile]:
     return [
         RemoteFile.model_validate({
             "name": file["meta"]["name"],
@@ -23,9 +22,9 @@ def field_to_files(data: list[dict]) -> list[RemoteFile]:
     ]
 
 class CustomObjectParams(TypedDict):
-    owners: Optional[list[str]]
-    followers: Optional[list[str]]
-    properties: Optional[dict[str, Any]]
+    owners: NotRequired[list[str]]
+    followers: NotRequired[list[str]]
+    properties: NotRequired[dict[str, Any]]
 
 class CustomObjectRequest(BaseModel):
     owners: list[str]|None = None
@@ -38,7 +37,7 @@ class CustomObjectRequest(BaseModel):
     @model_serializer(mode="plain")
     def serialise(
         self
-    ) -> dict:
+    ) -> dict[str, Any]:
         """
         Converts the object to a dictionary that conforms to the
         api requirements
@@ -67,10 +66,10 @@ class CustomObjectResponse(BaseModel):
     updated_at: datetime = Field(
         validation_alias = "updatedAt"
     )
-    custom_fields: Mapping[str, Any]|None = Field(
+    custom_fields: dict[str, Any]|None = Field(
         validation_alias="properties", default=None
     )
-    relations: tuple[Mapping, ...]|None = None
+    relations: tuple[dict[str, Any], ...]|None = None
 
     @field_validator("created_at", "updated_at", mode="before")
     @classmethod
@@ -88,12 +87,12 @@ class CustomObjectResponse(BaseModel):
     def validate_custom_fields(
         cls,
         fields: dict[str, Any]
-    ) -> MappingProxyType[str, Any]:
+    ) -> dict[str, Any]:
         """
         Scans for any fields that could be files and convert them
         to a remote file object
         """
-        custom_fields = {}
+        custom_fields: dict[str, Any] = {}
         for name, value in fields.items():
             if isinstance(value, list):
                 if is_file(value[0]):
@@ -102,17 +101,18 @@ class CustomObjectResponse(BaseModel):
                     custom_fields[name] = value
             else:
                 custom_fields[name] = value
-        return {
-            k: deep_freeze(v)
-            for k,v in custom_fields.items()
-        }
+        # return {
+        #     k: deep_freeze(v)
+        #     for k,v in custom_fields.items()
+        # }
+        return custom_fields
     
     @field_validator("relations", mode="before")
     @classmethod
     def validate_relations(
         cls,
-        value: list[dict]
-    ) -> tuple[MappingProxyType, ...]:
+        value: list[dict[str, Any]]
+    ) -> tuple[dict[str, Any], ...]:
         return tuple([
             deep_freeze(i)
             for i in value

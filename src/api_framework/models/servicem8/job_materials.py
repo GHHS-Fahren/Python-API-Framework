@@ -5,7 +5,7 @@ from datetime import datetime
 from api_framework.utils.model_validations \
     import strint_to_bool, model_del_empty_str
 
-from typing import Annotated, TypedDict, Any
+from typing import Annotated, TypedDict, NotRequired, Any
 
 
 
@@ -13,15 +13,15 @@ class JobMaterialParams(TypedDict):
     job_id: str
     material_id: str
     quantity: float
-    material_bundle_id: str|None
-    sort_order: int|None
-    name: str|None
-    cost: float|None
-    price: float|None
-    tax_rate_id: str|None
-    displayed_cost: float|None
-    displayed_amount: float|None
-    is_displayed_tax_inclusive: bool|None
+    material_bundle_id: NotRequired[str]
+    sort_order: NotRequired[int]
+    name: NotRequired[str]
+    cost: NotRequired[float]
+    price: NotRequired[float]
+    tax_rate_id: NotRequired[str]
+    displayed_cost: NotRequired[float]
+    displayed_amount: NotRequired[float]
+    is_displayed_tax_inclusive: NotRequired[bool]
 
 class JobMaterialResponse(BaseModel):
     model_config = ConfigDict(frozen = True)
@@ -89,5 +89,8 @@ class JobMaterialResponse(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def del_empty_str(cls, data) -> dict[str, Any]:
+    def del_empty_str(
+        cls,
+        data: dict[str, Any]
+    ) -> dict[str, Any]:
         return model_del_empty_str(data)
