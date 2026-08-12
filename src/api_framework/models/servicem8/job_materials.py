@@ -10,7 +10,7 @@ from typing import Annotated, TypedDict, NotRequired, Any
 
 
 class JobMaterialParams(TypedDict):
-    job_id: str
+    job_id: NotRequired[str]
     material_id: str
     quantity: float
     material_bundle_id: NotRequired[str]
