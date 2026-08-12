@@ -109,7 +109,7 @@ def ghl_mock_estimate(
         "companyId": "1234abcd5678efgh9012ijkl",
         "discount": {
             "type": "fixed",
-            "value": 299
+            "value": 299.58
         },
         "title": "Example Title",
         "name": "Example Name",

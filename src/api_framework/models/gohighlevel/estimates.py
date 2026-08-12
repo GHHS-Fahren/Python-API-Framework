@@ -112,7 +112,7 @@ class EstimateResponse(BaseModel):
     )
     # discount: Mapping[str, Any]
     discount_type: str
-    discount_value: int
+    discount_value: float
     title: str
     name: str
     items: tuple[EstimateItemsResponse, ...]
@@ -223,7 +223,7 @@ class EstimateTemplateResponse(BaseModel):
         validation_alias = "deleted"
     )
     discount_type: str
-    discount_value: int
+    discount_value: float
     title: str
     name: str
     items: tuple[EstimateItemsResponse, ...]
