@@ -28,7 +28,7 @@ class OpportunityContactResponse(BaseModel):
     id: str
     name: str
     email: str
-    phone: str
+    phone: str|None = None
     tags: tuple[str, ...]
     followers: tuple[str, ...]
 

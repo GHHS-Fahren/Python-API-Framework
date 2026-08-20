@@ -6,6 +6,7 @@ from .sub_account import CustomFieldAPI
 from .messages import MessagesAPI
 from .estimates import EstimatesAPI
 from .opportunities import OpportunitiesAPI
+from .contacts import ContactsAPI
 
 
 
@@ -27,6 +28,7 @@ class GHLClient(BaseAPIClient):
     messages: MessagesAPI
     estimates: EstimatesAPI
     opportunities: OpportunitiesAPI
+    contacts: ContactsAPI
 
     def __init__(
         self,
@@ -45,6 +47,7 @@ class GHLClient(BaseAPIClient):
         self.messages = MessagesAPI(self)
         self.estimates = EstimatesAPI(self)
         self.opportunities = OpportunitiesAPI(self)
+        self.contacts = ContactsAPI(self)
     
     def _get_auth(
             self,

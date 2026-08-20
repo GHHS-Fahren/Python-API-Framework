@@ -54,16 +54,18 @@ class EstimateContactResponse(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     id: str
-    name: str
-    phone: str = Field(
-        validation_alias = "phoneNo"
+    name: str|None = None
+    phone: str|None = Field(
+        validation_alias = "phoneNo",
+        default=None
     )
-    email: str
+    email: str|None = None
     additional_emails: Annotated[
         tuple[str, ...],
         BeforeValidator(tuple)
-    ] = Field(
-        validation_alias = "additionalEmails"
+    ]|None = Field(
+        validation_alias = "additionalEmails",
+        default=None
     )
     address: FrozenAddress
     # address: dict[str, str]
