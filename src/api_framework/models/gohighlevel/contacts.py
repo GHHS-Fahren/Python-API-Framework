@@ -10,6 +10,10 @@ class ContactNoteResponse(BaseModel):
 
     id: str
     body: str
+    body_text: Annotated[
+        str,
+        Field(validation_alias="bodyText")
+    ]
     user_id: Annotated[
         str,
         Field(validation_alias="userId")
