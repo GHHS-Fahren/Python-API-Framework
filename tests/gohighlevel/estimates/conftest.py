@@ -27,13 +27,12 @@ def ghl_mock_estimate_item_tax() -> dict[str, str|int]:
 
 @fixture
 def ghl_mock_estimate_item(
-    ghl_mock_estimate_item_tax: dict[str, str|int],
-    ghl_mock_attachment: dict[str, str|int]
+    ghl_mock_estimate_item_tax: dict[str, str|int]
 ) -> dict[str, Any]:
     return {
         "taxes": [ghl_mock_estimate_item_tax],
         "taxInclusive": True,
-        "attachments": [ghl_mock_attachment for _ in range(5)],
+        "attachments": ["https://example.com/document/6a2794b8dc7eb330de33361a" for _ in range(5)],
         "_id": "1234abcd5678efgh9012ijkl",
         "description": "<p>Example Description</p>",
         "currency": "DOUBLOONS",

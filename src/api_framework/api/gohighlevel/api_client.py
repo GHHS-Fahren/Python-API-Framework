@@ -7,6 +7,7 @@ from .messages import MessagesAPI
 from .estimates import EstimatesAPI
 from .opportunities import OpportunitiesAPI
 from .contacts import ContactsAPI
+from .invoices import InvoicesAPI
 
 
 
@@ -29,6 +30,7 @@ class GHLClient(BaseAPIClient):
     estimates: EstimatesAPI
     opportunities: OpportunitiesAPI
     contacts: ContactsAPI
+    invoices: InvoicesAPI
 
     def __init__(
         self,
@@ -48,6 +50,7 @@ class GHLClient(BaseAPIClient):
         self.estimates = EstimatesAPI(self)
         self.opportunities = OpportunitiesAPI(self)
         self.contacts = ContactsAPI(self)
+        self.invoices = InvoicesAPI(self)
     
     def _get_auth(
             self,

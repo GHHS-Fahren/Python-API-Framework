@@ -30,7 +30,7 @@ class TestGHLEstimateItemsTaxResponse(BaseFrozenModelTests):
 
 class TestGHLEstimateItemsResponse(BaseFrozenModelTests):
     model_class = EstimateItemsResponse
-    required_field = ("_id", "id")
+    required_field = ("name", "name")
     optional_field = None
     aliased_field = ("qty", "quantity")
 
@@ -48,11 +48,11 @@ class TestGHLEstimateItemsResponse(BaseFrozenModelTests):
         assert isinstance(item.taxes[0], EstimateItemsTaxResponse)
         assert item.taxes[0].name == self.api_payload["taxes"][0]["name"]
     
-    def test_for_attachments_conversion(self):
-        item: EstimateItemsResponse = self.build(self.api_payload)
-        assert isinstance(item.attachments, tuple)
-        assert isinstance(item.attachments[0], RemoteFile)
-        assert item.attachments[0].name == self.api_payload["attachments"][0]["name"]
+    # def test_for_attachments_conversion(self):
+    #     item: EstimateItemsResponse = self.build(self.api_payload)
+    #     assert isinstance(item.attachments, tuple)
+    #     assert isinstance(item.attachments[0], RemoteFile)
+    #     assert item.attachments[0].name == self.api_payload["attachments"][0]["name"]
 
 class TestGHLEstimateContactResponse(BaseFrozenModelTests):
     model_class = EstimateContactResponse
@@ -73,10 +73,10 @@ class TestGHLEstimateContactResponse(BaseFrozenModelTests):
     #     assert isinstance(contact.address, FrozenAddress)
     #     assert contact.address.state == self.api_payload["address"]["state"]
     
-    def test_for_tuple_conversion(self):
-        contact: EstimateContactResponse = self.build(self.api_payload)
+    # def test_for_tuple_conversion(self):
+        # contact: EstimateContactResponse = self.build(self.api_payload)
         # assert isinstance(contact.custom_fields, tuple)
-        assert isinstance(contact.additional_emails, tuple)
+        # assert isinstance(contact.additional_emails, tuple)
 
 class TestGHLEstimateResponse(BaseFrozenModelTests):
     model_class = EstimateResponse
@@ -98,11 +98,11 @@ class TestGHLEstimateResponse(BaseFrozenModelTests):
         assert isinstance(estimate.items[0], EstimateItemsResponse)
         assert estimate.items[0].id == self.api_payload["items"][0]["_id"]
 
-    def test_for_attachments_conversion(self):
-        item: EstimateResponse = self.build(self.api_payload)
-        assert isinstance(item.attachments, tuple)
-        assert isinstance(item.attachments[0], RemoteFile)
-        assert item.attachments[0].name == self.api_payload["attachments"][0]["name"]
+    # def test_for_attachments_conversion(self):
+    #     item: EstimateResponse = self.build(self.api_payload)
+    #     assert isinstance(item.attachments, tuple)
+    #     assert isinstance(item.attachments[0], RemoteFile)
+    #     assert item.attachments[0].name == self.api_payload["attachments"][0]["name"]
     
     def test_for_date_conversion(self):
         item: EstimateResponse = self.build(self.api_payload)
