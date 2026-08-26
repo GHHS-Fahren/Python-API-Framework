@@ -2,11 +2,13 @@ from pydantic import AfterValidator, AliasPath, BaseModel, ConfigDict, Field, Be
     field_validator, model_validator
 from datetime import datetime
 
-from api_framework.models.common.address import FrozenAddress
-from api_framework.models.common.file_models import RemoteFile
-from api_framework.utils.deep_freeze import deep_freeze
+from api_framework.models.gohighlevel.common import (
+    InlineBusinessResponse, InvoiceItemResponse,
+    InvoiceDiscountResponse, InvoiceAttachmentResponse,
+    InvoiceContactResponse, InvoiceSentToResponse
+)
 
-from typing import Any, Annotated, Callable, Literal
+from typing import Any, Annotated, Literal
 
 
 
@@ -15,178 +17,8 @@ estimate_statuses = Literal[
     "declined", "invoiced", "viewed"
 ]
 
-class AddressResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    line1: Annotated[
-        str | None,
-        Field(validation_alias="addressLine1")
-    ] = None
-    line2: Annotated[
-        str | None,
-        Field(validation_alias="addressLine2")
-    ] = None
-    city: str | None = None
-    state: str | None = None
-    country: Annotated[
-        str | None,
-        Field(validation_alias="countryCode")
-    ] = None
-    post_code: Annotated[
-        str | None,
-        Field(validation_alias="postalCode")
-    ] = None
-
-class CustomFieldResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    name: str
-    field_key: Annotated[
-        str,
-        Field(validation_alias="fieldKey")
-    ]
-    id: str
-    value: Any
-
-class EstimateBusinessResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    logo: Annotated[
-        str | None,
-        Field(validation_alias="logoUrl")
-    ] = None
-    name: str | None = None
-    phone: Annotated[
-        str | None,
-        Field(validation_alias="phoneNo")
-    ] = None
-    address: AddressResponse | None
-    website: str | None = None
-    custom_values: tuple[CustomFieldResponse, ...] | None = None
-
-class EstimateItemsTaxResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    id: Annotated[
-        str,
-        Field(validation_alias="_id")
-    ]
-    name: str
-    rate: float
-    calculation: Literal["exclusive"] | None = None
-    description: str | None = None
-    tax_id: Annotated[
-        str | None,
-        Field(validation_alias="taxId")
-    ] = None
-
-class EstimateItemsResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    id: Annotated[
-        str | None, #No this is not wrong, somehow ids are not actually required
-        Field(validation_alias="_id")
-    ] = None
-    name: str
-    description: str | None = None
-    product_id: Annotated[
-        str | None,
-        Field(validation_alias="productId")
-    ] = None
-    price_id: Annotated[
-        str | None,
-        Field(validation_alias="priceId")
-    ] = None
-    currency: str
-    amount: float
-    quantity: Annotated[
-        float,
-        Field(validation_alias="qty")
-    ]
-    taxes: tuple[EstimateItemsTaxResponse, ...]
-    automatic_tax_category_id: Annotated[
-        str | None,
-        Field(validation_alias="automaticTaxCategoryId")
-    ] = None
-    is_setup_fee_item: Annotated[
-        bool | None,
-        Field(validation_alias="isSetupFeeItem")
-    ] = None
-    type: str | None = None
-    is_tax_inclusive: Annotated[
-        bool | None,
-        Field(validation_alias="taxInclusive")
-    ] = None
-    attachments: tuple[str, ...]
-
-class EstimateDiscountResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    value: float | None = None
-    type: Literal["percentage", "fixed"]
-    valid_on_product_ids: tuple[str, ...] | None = None
-
-class EstimateAttachmentResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    id: str
-    name: str
-    url: str
-    type: str
-    size: float
-
-class EstimateContactResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    email_validator: Callable[
-        [list[dict[str, str]]|None],
-        list[str] | None
-    ] =  lambda x: [i["email"] for i in x] if x is not None else None
-
-    id: str
-    name: str
-    phone: Annotated[
-        str | None,
-        Field(validation_alias="phoneNo")
-    ] = None
-    email: str | None = None
-    additional_emails: Annotated[
-        tuple[str, ...] | None,
-        Field(validation_alias="additionalEmails"),
-        BeforeValidator(email_validator)
-    ] = None
-    company_name: Annotated[
-        str | None,
-        Field(validation_alias="companyName")
-    ] = None
-    address: AddressResponse | None = None
-    custom_fields: Annotated[
-        tuple[str, ...] | None,
-        Field(validation_alias="customFields")
-    ] = None
-
-class EstimateSentToResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    emails: Annotated[
-        tuple[str, ...] | None,
-        Field(validation_alias="email")
-    ] = None
-    cc_emails: Annotated[
-        tuple[str, ...] | None,
-        Field(validation_alias="emailCc")
-    ] = None
-    bcc_emails: Annotated[
-        tuple[str, ...] | None,
-        Field(validation_alias="emailBcc")
-    ] = None
-    phones: Annotated[
-        tuple[str, ...] | None,
-        Field(validation_alias="phoneNo")
-    ] = None
-
 class EstimateActionHistoryResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True)  # pyright: ignore[reportUnannotatedClassAttribute]
 
     status: Annotated[
         estimate_statuses,
@@ -202,7 +34,7 @@ class EstimateActionHistoryResponse(BaseModel):
     ] = None
 
 class EstimateFrequencySettingScheduleResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True)  # pyright: ignore[reportUnannotatedClassAttribute]
 
     execute_at: Annotated[
         datetime,
@@ -312,7 +144,7 @@ class EstimateFrequencySettingScheduleResponse(BaseModel):
         return data
 
 class EstimatePaymentScheduleConfig(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True)  # pyright: ignore[reportUnannotatedClassAttribute]
 
     type: str
     deposit_date_type: Annotated[
@@ -330,7 +162,7 @@ class EstimatePaymentScheduleConfig(BaseModel):
     # schedules: tuple[?, ...]
 
 class EstimateResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True)  # pyright: ignore[reportUnannotatedClassAttribute]
 
     id: Annotated[
         str,
@@ -343,22 +175,22 @@ class EstimateResponse(BaseModel):
     is_active: Annotated[
         bool,
         Field(validation_alias="deleted"),
-        AfterValidator(lambda x: not x) # is_deleted to is_active
+        AfterValidator(lambda x: not x) # is_deleted to is_active  # pyright: ignore[reportAny]
     ]
     name: str
     currency: str
     business: Annotated[
-        EstimateBusinessResponse,
+        InlineBusinessResponse,
         Field(validation_alias="businessDetails")
     ]
-    items: tuple[EstimateItemsResponse, ...]
-    discount: EstimateDiscountResponse
+    items: tuple[InvoiceItemResponse, ...]
+    discount: InvoiceDiscountResponse
     title: str | None = None
     number_prefix: Annotated[
         str | None,
         Field(validation_alias="estimateNumberPrefix")
     ] = None
-    attachments: tuple[EstimateAttachmentResponse, ...]
+    attachments: tuple[InvoiceAttachmentResponse, ...]
     updated_by: Annotated[
         str | None,
         Field(validation_alias="updatedBy")
@@ -381,7 +213,7 @@ class EstimateResponse(BaseModel):
         Field(validation_alias="companyId")
     ]
     contact: Annotated[
-        EstimateContactResponse,
+        InvoiceContactResponse,
         Field(validation_alias="contactDetails")
     ]
     number: Annotated[
@@ -409,12 +241,18 @@ class EstimateResponse(BaseModel):
         Field(validation_alias="automaticTaxesEnabled")
     ] = None
     # meta: dict[str, Any]
+    created_with_template: Annotated[
+        str | None,
+        Field(validation_alias=AliasPath(
+            "meta", "documentCreatedByTemplateId"
+        ))
+    ] = None
     action_history: Annotated[
         tuple[EstimateActionHistoryResponse, ...],
         Field(validation_alias="estimateActionHistory")
     ]
     sent_to: Annotated[
-        EstimateSentToResponse | None,
+        InvoiceSentToResponse | None,
         Field(validation_alias="sentTo")
     ] = None
     is_recurring: Annotated[
@@ -477,7 +315,7 @@ class EstimateResponse(BaseModel):
     ]
 
 class EstimateTemplateResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True)  # pyright: ignore[reportUnannotatedClassAttribute]
 
     id: str = Field(
         validation_alias = "_id"
@@ -492,7 +330,7 @@ class EstimateTemplateResponse(BaseModel):
     discount_value: float
     title: str
     name: str
-    items: tuple[EstimateItemsResponse, ...]
+    items: tuple[InvoiceItemResponse, ...]
     terms: str = Field(
         validation_alias = "termsNotes"
     )

@@ -12,6 +12,8 @@ ghl_client = GoHighLevel(
 )
 funcs = {
     ghl_client.estimates.search_estimates: {"limit": 1000},
+    ghl_client.invoices.search_invoices: {"limit": 1000},
+    ghl_client.transactions.search_transactions: {"limit": 1000}
     # ghl_client.estimates.search_templates: {"limit": 1000},
     # ghl_client.forms.get_form_submissions: {"limit": 1000},
     # ghl_client.records.search_records: {"limit": 1000, "object_key": "properties"}
@@ -22,6 +24,6 @@ funcs = {
     funcs.items()
 )
 def test_function(func, kwargs):
-    _ = func(**kwargs)
-    # for i in range(1, 10):
-        # _ = func(**{"limit": 1000, "offset": i*1000})
+    # _ = func(**kwargs)
+    for i in range(0, 10):
+        _ = func(**{"limit": 1000, "offset": i*1000})
