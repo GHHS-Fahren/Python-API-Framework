@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from datetime import datetime
 
-from typing import Any, Literal, TypedDict, NotRequired
+from typing import Annotated, Any, Literal, TypedDict, NotRequired
 
 
 
@@ -39,6 +39,15 @@ class OpportunityContactResponse(BaseModel):
         tags: list[str]
     ) -> tuple[str, ...]:
         return tuple(tags)
+
+class OpportunityCustomFieldResponse(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    id: str
+    value: Annotated[
+        Any,
+        Field(validation_alias="fieldValue")
+    ]
 
 class OpportunityResponse(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -128,10 +137,10 @@ class OpportunityResponse(BaseModel):
         default=None,
         validation_alias="lostReasonId"
     )
-    custom_fields: tuple[dict[str, Any], ...] = Field(
-        default_factory=tuple,
-        validation_alias="customFields"
-    )
+    custom_fields: Annotated[
+        tuple[OpportunityCustomFieldResponse, ...],
+        Field(validation_alias="customFields")
+    ]
     followers: tuple[str, ...] = Field(default_factory=tuple)
     external_object_id: str|None = Field(
         default=None,
