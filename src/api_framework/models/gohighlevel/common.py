@@ -76,7 +76,7 @@ class InvoiceItemTaxResponse(BaseModel):
     ] = None
 
 class InvoiceItemResponse(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    # model_config = ConfigDict(frozen=True)
 
     id: Annotated[
         str | None, #No this is not wrong, somehow ids are not actually required

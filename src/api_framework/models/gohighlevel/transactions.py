@@ -17,9 +17,9 @@ class TransactionMetaResponse(BaseModel):
         Field(validation_alias="invoiceNumberPrefix")
     ]
     verify_minimum_value_to_pay: Annotated[
-        bool,
-        Field(validation_alias="verifyMinimumValueToPays")
-    ]
+        bool | None,
+        Field(validation_alias="verifyMinimumValueToPay")
+    ] = None
 
 class TransactionChargeSnapshotBankTransfer(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -317,7 +317,10 @@ class TransactionResponse(BaseModel):
         str | None,
         Field(validation_alias="entitySourceId")
     ] = None
-    entity_source_meta: TransactionMetaResponse | None = None
+    entity_source_meta: Annotated[
+        TransactionMetaResponse,
+        Field(validation_alias="entitySourceMeta")
+    ]
     subscription_id: Annotated[
         str | None,
         Field(validation_alias="subscriptionId")

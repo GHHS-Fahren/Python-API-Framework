@@ -20,7 +20,7 @@ class JobMaterialParams(TypedDict):
     price: NotRequired[float]
     tax_rate_id: NotRequired[str]
     displayed_cost: NotRequired[float]
-    displayed_amount: NotRequired[float]
+    displayed_amount: NotRequired[float | str]
     is_displayed_tax_inclusive: NotRequired[bool]
 
 class JobMaterialResponse(BaseModel):
