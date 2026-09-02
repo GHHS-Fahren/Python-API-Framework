@@ -15,9 +15,9 @@ class ContactNoteResponse(BaseModel):
         Field(validation_alias="bodyText")
     ]
     user_id: Annotated[
-        str,
+        str|None,
         Field(validation_alias="userId")
-    ]
+    ] = None
     created_at: Annotated[
         datetime,
         Field(validation_alias="dateAdded"),
