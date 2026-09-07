@@ -9,6 +9,8 @@ from .opportunities import OpportunitiesAPI
 from .contacts import ContactsAPI
 from .invoices import InvoicesAPI
 from .transactions import TransactionsAPI
+from .products import ProductsAPI
+from .prices import PricesAPI
 
 
 
@@ -33,6 +35,8 @@ class GHLClient(BaseAPIClient):
     contacts: ContactsAPI
     invoices: InvoicesAPI
     transactions: TransactionsAPI
+    products: ProductsAPI
+    prices: PricesAPI
 
     def __init__(
         self,
@@ -54,6 +58,8 @@ class GHLClient(BaseAPIClient):
         self.contacts = ContactsAPI(self)
         self.invoices = InvoicesAPI(self)
         self.transactions = TransactionsAPI(self)
+        self.products = ProductsAPI(self)
+        self.prices = PricesAPI(self)
     
     def _get_auth(
             self,
