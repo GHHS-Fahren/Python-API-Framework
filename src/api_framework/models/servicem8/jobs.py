@@ -222,6 +222,7 @@ class JobResponse(BaseModel):
         cls,
         badges: str
     ) -> tuple[str, ...]|None:
+        if badges is None: return None
         if len(badges) == 0: return None
         badge_list = tuple(loads(badges))
         if len(badge_list) == 0: return None
