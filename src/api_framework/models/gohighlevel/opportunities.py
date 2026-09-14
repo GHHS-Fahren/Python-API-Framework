@@ -1,9 +1,13 @@
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from datetime import datetime
 
 from typing import Annotated, Any, Literal, TypedDict, NotRequired
 
 
+
+OpportunityStatus = Literal[
+    "open", "won", "lost", "abandoned", "all"
+]
 
 class OpportunityParams(TypedDict):
     opportunity_id: NotRequired[str]
@@ -14,12 +18,24 @@ class OpportunityParams(TypedDict):
     is_remove_all_followers: NotRequired[bool]
     followers_action_type: NotRequired[str]
     name: NotRequired[str]
-    status: NotRequired[Literal["open", "won", "lost", "abandoned", "all"]]
+    status: NotRequired[OpportunityStatus]
     value: NotRequired[float]
     forecast_expected_close_date: NotRequired[datetime]
     forecast_probability: NotRequired[float]
     assigned_to: NotRequired[str]
     lost_reason_id: NotRequired[str]
+    custom_fields: NotRequired[list[dict[str, Any]]]
+
+class OpportunityCreate(TypedDict):
+    pipeline_id: str
+    contact_id: str
+    name: str
+    status: OpportunityStatus
+    pipeline_stage_id: NotRequired[str]
+    value: NotRequired[float]
+    forecast_expected_close_date: NotRequired[datetime]
+    forecast_probability: NotRequired[float]
+    assigned_to: NotRequired[str]
     custom_fields: NotRequired[list[dict[str, Any]]]
 
 class OpportunityContactResponse(BaseModel):
@@ -30,7 +46,7 @@ class OpportunityContactResponse(BaseModel):
     email: str
     phone: str|None = None
     tags: tuple[str, ...]
-    followers: tuple[str, ...]
+    followers: tuple[str, ...] | None = None
 
     @field_validator("tags", "followers", mode="before")
     @classmethod
@@ -137,15 +153,36 @@ class OpportunityResponse(BaseModel):
         default=None,
         validation_alias="lostReasonId"
     )
+    # custom_fields: Annotated[
+    #     tuple[OpportunityCustomFieldResponse, ...],
+    #     Field(validation_alias="customFields")
+    # ]
     custom_fields: Annotated[
-        tuple[OpportunityCustomFieldResponse, ...],
+        tuple[dict[str, Any], ...],
         Field(validation_alias="customFields")
     ]
-    followers: tuple[str, ...] = Field(default_factory=tuple)
+    followers: tuple[str, ...] | None = None
     external_object_id: str|None = Field(
         default=None,
         validation_alias="externalObjectId"
     )
+
+    # @model_validator(mode="before")
+    # @classmethod
+    # def normalise_fields(
+    #     cls,
+    #     data: dict[str, Any]
+    # ) -> dict[str, Any]:
+    #     new_data = {**data}
+    #     fields = new_data.pop("customFields")
+    #     new_fields = []
+    #     for i in fields:
+    #         if "fieldValueString" in i:
+    #             new_field_dat = {**i}
+    #             del new_field_dat["fieldValueString"]
+    #             new_field_dat["value"] = i["fieldValueString"]
+    #             new_fields.append(new_field_dat)
+    #     new_data["customFields"] = new_fields
 
     @field_validator(
         "created_at", "updated_at",

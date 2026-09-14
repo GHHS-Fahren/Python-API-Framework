@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field, BeforeValidator
 from pydantic.alias_generators import to_camel
 from datetime import datetime, date
 
-from typing import Annotated
+from typing import Annotated, Any, NotRequired, TypedDict
 
 
 
@@ -152,3 +152,43 @@ class ContactResponse(BaseModel):
         ContactDNDConfigResponse | None,
         Field(validation_alias="dndSettings")
     ] = None
+
+
+
+class ContactDndConfigSettingCreate(TypedDict):
+    status: str
+    message: NotRequired[str]
+    code: NotRequired[str]
+
+class ContactInboundDndConfigCreate(TypedDict):
+    all: NotRequired[ContactDndConfigSettingCreate]
+
+class ContactDndConfigCreate(TypedDict):
+    call: NotRequired[ContactDndConfigSettingCreate]
+    email: NotRequired[ContactDndConfigSettingCreate]
+    sms: NotRequired[ContactDndConfigSettingCreate]
+    whats_app: NotRequired[ContactDndConfigSettingCreate]
+    gmb: NotRequired[ContactDndConfigSettingCreate]
+    fb: NotRequired[ContactDndConfigSettingCreate]
+
+class ContactCreate(TypedDict):
+    name: NotRequired[str]
+    first_name: NotRequired[str]
+    last_name: NotRequired[str]
+    email: NotRequired[str]
+    timezone: NotRequired[str]
+    company_name: NotRequired[str]
+    phone: NotRequired[str]
+    is_dnd: bool
+    source: NotRequired[str]
+    address1: NotRequired[str]
+    city: NotRequired[str]
+    state: NotRequired[str]
+    country: NotRequired[str]
+    post_code: NotRequired[str]
+    website: NotRequired[str]
+    tags: list[str]
+    date_of_birth: NotRequired[date]
+    custom_fields: list[dict[str, Any]]
+    inbound_dnd_settings: NotRequired[ContactInboundDndConfigCreate]
+    dnd_config: NotRequired[ContactDndConfigCreate]
