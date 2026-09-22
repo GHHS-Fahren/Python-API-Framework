@@ -1,4 +1,6 @@
 from __future__ import annotations
+from json import dumps
+from urllib.parse import quote
 
 from api_framework.models.common.address import FrozenAddress
 from api_framework.models.servicem8.jobs import JobResponse, JobParams
@@ -51,7 +53,7 @@ class JobsAPI():
         self,
         job_data: JobParams
     ) -> JobResponse:
-        address=job_data.get("address") or FrozenAddress()
+        address=job_data.get("address")
         _, headers = self._api_client.request(
             "POST",
             "job.json",
@@ -65,15 +67,20 @@ class JobsAPI():
                 "job_description": job_data.get("description", None),
                 "work_done_description": job_data.get("work_done", None),
                 "badges": job_data.get("badges", None),
-                "lat": address.latitude,
-                "lng": address.longitude,
-                "geo_number": address.number,
-                "geo_street": address.street,
-                "geo_city": address.city,
-                "geo_state": address.state,
-                "geo_postcode": address.postcode,
-                "geo_country": address.country,
-                "job_address": address.full_address,
+                "job_address": \
+                    address.full_address if isinstance(address, FrozenAddress)
+                    else address
+                # I think the SM8 api specifies that these are auto
+                # generated.
+                # "lat": address.latitude,
+                # "lng": address.longitude,
+                # "geo_number": address.number,
+                # "geo_street": address.street,
+                # "geo_city": address.city,
+                # "geo_state": address.state,
+                # "geo_postcode": address.postcode,
+                # "geo_country": address.country,
+                # "job_address": address.full_address,
             }
         )
         return self.get_job(headers["x-record-uuid"])
@@ -83,7 +90,7 @@ class JobsAPI():
         job_id: str,
         job_data: JobParams
     ) -> JobResponse:
-        address=job_data.get("address") or FrozenAddress()
+        address=job_data.get("address")
         _ = self._api_client.request(
             "POST",
             f"job/{job_id}.json",
@@ -95,16 +102,37 @@ class JobsAPI():
                 "billing_address": job_data.get("billing_address", None),
                 "job_description": job_data.get("description", None),
                 "work_done_description": job_data.get("work_done", None),
-                "badges": job_data.get("badges", None),
-                "lat": address.latitude,
-                "lng": address.longitude,
-                "geo_number": address.number,
-                "geo_street": address.street,
-                "geo_city": address.city,
-                "geo_state": address.state,
-                "geo_postcode": address.postcode,
-                "geo_country": address.country,
-                "job_address": address.full_address,
+                "badges": None if "badges" not in job_data
+                    else dumps(job_data["badges"]),
+                "job_address": \
+                    address.full_address if isinstance(address, FrozenAddress)
+                    else address
+                # I think the SM8 api specifies that these are auto
+                # generated.
+                # "lat": address.latitude,
+                # "lng": address.longitude,
+                # "geo_number": address.number,
+                # "geo_street": address.street,
+                # "geo_city": address.city,
+                # "geo_state": address.state,
+                # "geo_postcode": address.postcode,
+                # "geo_country": address.country,
+                # "job_address": address.full_address,
             }
         )
         return self.get_job(job_id)
+    
+    def search_jobs(
+        self,
+        filters: str | None = None
+    ) -> list[JobResponse]:
+        url = "job.json"
+        if filters: url += f"?$filter={quote(filters)}"
+        jobs = self._api_client.request(
+            "GET",
+            url
+        )
+        return [
+            JobResponse.model_validate(i)
+            for i in jobs
+        ]

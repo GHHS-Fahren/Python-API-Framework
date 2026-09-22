@@ -21,7 +21,6 @@ class ContactsAPI:
     
     def search_notes(
         self,
-        *,
         contact_id: str
     ) -> list[ContactNoteResponse]:
         notes = self._api_client.request(  # pyright: ignore[reportCallIssue, reportArgumentType]

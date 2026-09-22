@@ -15,11 +15,13 @@ class JobParams(TypedDict):
     category: NotRequired[str]
     queue: NotRequired[str]
     status: NotRequired[Literal["Quote","Work Order","Unsuccessful","Completed"]]
-    address: NotRequired[FrozenAddress]
+    # address: NotRequired[FrozenAddress]
+    address: NotRequired[str | FrozenAddress | None]
+    job_address: NotRequired[str]
     billing_address: NotRequired[str]
     description: NotRequired[str]
     work_done: NotRequired[str]
-    badges: NotRequired[tuple[str, ...]]
+    badges: NotRequired[tuple[str, ...] | list[str]]
 
 class JobResponse(BaseModel):
     model_config = ConfigDict(

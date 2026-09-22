@@ -41,7 +41,7 @@ class CustomObjectRecordAPI():
         page: int = 1,
         limit: int = 20,
         query: str|None = None,
-        filters: list[dict]|None = None,
+        filters: list[dict[str, Any]]|None = None,
         search_after: list[str]|None = None
     ) -> list[CustomObjectResponse]:
         """
