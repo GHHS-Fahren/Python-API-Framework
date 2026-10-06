@@ -3,7 +3,7 @@ from __future__ import annotations
 from urllib.parse import quote
 
 from api_framework.models.servicem8.job_materials import (
-    JobMaterialResponse, JobMaterialParams
+    JobMaterialResponse, JobMaterialParams, JobMaterialCreate, JobMaterialUpdate
 )
 
 from typing import TYPE_CHECKING, Any
@@ -13,15 +13,15 @@ if TYPE_CHECKING:
 
 
 
-def serialise_data(data: JobMaterialParams) -> dict[str, Any]:
+def serialise_data(data: JobMaterialParams|JobMaterialCreate|JobMaterialUpdate) -> dict[str, Any]:
     is_tax_inclusive = data.get(
         "is_displayed_tax_inclusive"
     )
     return {
         "job_uuid":
-            data["job_id"],
+            data.get("job_id"),
         "material_uuid":
-            data["material_id"],
+            data.get("material_id"),
         "quantity":
             "{:.4f}".format(data["quantity"]),
         "job_material_bundle_uuid":
@@ -105,7 +105,7 @@ class JobMaterialAPI():
 
     def create_job_material(
         self,
-        job_material_data: JobMaterialParams
+        job_material_data: JobMaterialCreate
     ) -> JobMaterialResponse:
         _, headers = self._api_client.request(
             "POST",
@@ -120,13 +120,13 @@ class JobMaterialAPI():
     def update_job_material(
         self,
         job_material_id: str,
-        job_material_data: JobMaterialParams
+        job_material_data: JobMaterialUpdate
     ) -> JobMaterialResponse:
         _ = self._api_client.request(
             "POST",
             f"jobmaterial/{job_material_id}.json",
             return_headers = True,
-            json = serialise_data(job_material_data)
+            json=serialise_data(job_material_data)
         )
         return self.get_job_material(job_material_id)
     

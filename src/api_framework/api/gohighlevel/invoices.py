@@ -24,7 +24,6 @@ class InvoicesAPI:
     def search_invoices(
         self,
         *,
-        status: str | None = None,
         start_at: datetime | None = None,
         end_at: datetime | None = None,
         search: str | None = None,
@@ -33,7 +32,12 @@ class InvoicesAPI:
         limit: int | None = 20,
         offset: int | None = 0,
         sort_field: Literal["issueDate"] | None = None,
-        sort_order: Literal["ascend", "decend"] | None = None
+        sort_order: Literal["ascend", "decend"] | None = None,
+        status: Literal[
+            "all", "draft", "sent",
+            "accepted", "declined",
+            "invoiced", "viewed"
+        ]|None = None
     ) -> list[InvoiceResponse]:
         invoices = self._api_client.request(  # pyright: ignore[reportCallIssue, reportArgumentType]
             "GET",
@@ -54,7 +58,8 @@ class InvoicesAPI:
                 "limit": limit,
                 "offset": offset,
                 "sortField": sort_field,
-                "sortOrder": sort_order
+                "sortOrder": sort_order,
+                "status": status
             },
             delete_empty=True
         )["invoices"]

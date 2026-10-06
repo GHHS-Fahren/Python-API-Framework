@@ -23,6 +23,34 @@ class JobMaterialParams(TypedDict):
     displayed_amount: NotRequired[float | str]
     is_displayed_tax_inclusive: NotRequired[bool]
 
+class JobMaterialCreate(TypedDict):
+    job_id: str
+    material_id: str
+    quantity: float
+    material_bundle_id: NotRequired[str]
+    sort_order: NotRequired[int]
+    name: NotRequired[str]
+    cost: NotRequired[float]
+    price: NotRequired[float]
+    tax_rate_id: NotRequired[str]
+    displayed_cost: NotRequired[float]
+    displayed_amount: NotRequired[float | str]
+    is_displayed_tax_inclusive: NotRequired[bool]
+
+class JobMaterialUpdate(TypedDict):
+    job_id: NotRequired[str]
+    material_id: NotRequired[str]
+    quantity: float
+    material_bundle_id: NotRequired[str]
+    sort_order: NotRequired[int]
+    name: NotRequired[str]
+    cost: NotRequired[float]
+    price: NotRequired[float]
+    tax_rate_id: NotRequired[str]
+    displayed_cost: NotRequired[float]
+    displayed_amount: NotRequired[float | str]
+    is_displayed_tax_inclusive: NotRequired[bool]
+
 class JobMaterialResponse(BaseModel):
     model_config = ConfigDict(frozen = True)
 
