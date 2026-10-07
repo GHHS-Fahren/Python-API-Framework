@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field, AliasPath, ValidationError, model_validator
 from datetime import datetime
+from decimal import Decimal
 
 from typing import Annotated, Any, Literal
 
@@ -110,12 +111,12 @@ class TransactionChargeSnapshotCardCharge(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     id: str
-    amount: float
-    amount_captured: float
-    amount_refunded: float
+    amount: Decimal
+    amount_captured: Decimal
+    amount_refunded: Decimal
     application: str
-    application_fee: float | None = None # Assumed type
-    application_fee_amount: float | None = None # Assumed type
+    application_fee: Decimal | None = None # Assumed type
+    application_fee_amount: Decimal | None = None # Assumed type
     balance_transaction: str
     billing: TransactionChargeSnapshotCardChargeBilling | None = None
     calculated_statement_descriptor: str
@@ -185,12 +186,12 @@ class TransactionChargeSnapshotCard(BaseModel):
     id: str
     object: str
     # allowed_payment_method_types: ? | None = None
-    amount: float
-    amount_capturable: float
+    amount: Decimal
+    amount_capturable: Decimal
     # amount_details: dict[str, dict[str, ?]]
-    amount_received: float
+    amount_received: Decimal
     application: str
-    application_fee_amount: float | None = None # Assumed type
+    application_fee_amount: Decimal | None = None # Assumed type
     automatic_payment_methods: TransactionChargeSnapshotCardAutoPaymentMethods
     cancelled_at: datetime | None = None
     cancellation_reason: str | None = None # Assumed type
@@ -287,7 +288,7 @@ class TransactionResponse(BaseModel):
         Field(validation_alias="contactEmail")
     ] =  None
     currency: str
-    amount: float
+    amount: Decimal
     status: str
     is_live: Annotated[
         bool,
@@ -357,7 +358,7 @@ class TransactionResponse(BaseModel):
         Field(validation_alias="updatedAt")
     ]
     amount_refunded: Annotated[
-        float | None,
+        Decimal | None,
         Field(validation_alias="amountRefunded")
     ] = None
     payment_method: Annotated[

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field, AliasPath
 from datetime import datetime
+from decimal import Decimal
 
 from api_framework.models.gohighlevel.common import (
     InlineBusinessResponse, InvoiceItemResponse,
@@ -28,7 +29,7 @@ class InvoiceLateFeesConfigResponse(BaseModel):
         Field(validation_alias="enable")
     ]
     type: str
-    value: float
+    value: Decimal
     frequency: IntervalResponse
     grace: IntervalResponse
     # charges: tuple[???, ...]
@@ -135,7 +136,7 @@ class InvoiceResponse(BaseModel):
         Field(validation_alias="liveMode")
     ]
     amount_paid: Annotated[
-        float,
+        Decimal,
         Field(validation_alias="amountPaid")
     ]
     name: str
@@ -165,10 +166,10 @@ class InvoiceResponse(BaseModel):
         tuple[InvoiceItemResponse, ...],
         Field(validation_alias="invoiceItems")
     ]
-    total: float
+    total: Decimal
     title: str
     amount_due: Annotated[
-        float,
+        Decimal,
         Field(validation_alias="amountDue")
     ]
     created_at: Annotated[
@@ -217,7 +218,7 @@ class InvoiceResponse(BaseModel):
         ))
     ] = None
     invoice_total: Annotated[
-        float,
+        Decimal,
         Field(validation_alias="invoiceTotal")
     ]
     last_visited_at: Annotated[

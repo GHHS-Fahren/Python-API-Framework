@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from datetime import datetime
+from decimal import Decimal
 
 from typing import Annotated, Literal
 
@@ -19,7 +20,7 @@ class PriceMembershipOffersResponse(CamelResponseModel):
         Field(validation_alias="_id")
     ]
     label: str
-    value: str
+    value: Decimal
 
 class PriceRecurringResponse(CamelResponseModel):
     interval: Literal["day", "month", "week", "year"]
@@ -39,11 +40,11 @@ class PriceResponse(CamelResponseModel):
     name: str
     type: Literal["one_time", "recurring"]
     currency: str
-    amount: float
+    amount: Decimal
     recurring: PriceRecurringResponse | None = None
     created_at: datetime
     updated_at: datetime
-    compare_at_price: float | None = None
+    compare_at_price: Decimal | None = None
     is_track_inventory: Annotated[
         bool,
         Field(validation_alias="trackInventory")

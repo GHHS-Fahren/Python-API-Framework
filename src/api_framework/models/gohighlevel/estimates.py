@@ -1,6 +1,7 @@
 from pydantic import AfterValidator, AliasPath, BaseModel, ConfigDict, Field, BeforeValidator, \
     field_validator, model_validator
 from datetime import datetime
+from decimal import Decimal
 
 from api_framework.models.gohighlevel.common import (
     InlineBusinessResponse, InvoiceItemResponse,
@@ -195,7 +196,7 @@ class EstimateResponse(BaseModel):
         str | None,
         Field(validation_alias="updatedBy")
     ] = None
-    total: float
+    total: Decimal
     created_at: Annotated[
         datetime,
         Field(validation_alias="createdAt")
@@ -272,7 +273,7 @@ class EstimateResponse(BaseModel):
         Field(validation_alias="lastVisitedAt")
     ] = None
     amount_in_usd: Annotated[
-        float | None,
+        Decimal | None,
         Field(validation_alias="totalamountInUSD")
     ] = None
     is_auto_invoice_enabled: Annotated[
@@ -327,7 +328,7 @@ class EstimateTemplateResponse(BaseModel):
         validation_alias = "deleted"
     )
     discount_type: str
-    discount_value: float
+    discount_value: Decimal
     title: str
     name: str
     items: tuple[InvoiceItemResponse, ...]
@@ -338,7 +339,7 @@ class EstimateTemplateResponse(BaseModel):
         validation_alias = "updatedBy"
     )
     currency: str
-    total: float
+    total: Decimal
     # attachments: tuple[RemoteFile, ...]
     # configuration: Mapping[str, Any]
     created_at: datetime = Field(

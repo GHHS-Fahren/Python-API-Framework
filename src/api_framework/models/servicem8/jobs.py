@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, model_validator, \
     field_validator
 from datetime import datetime
+from decimal import Decimal
 from json import loads
 
 from api_framework.models.common.address import FrozenAddress
@@ -96,7 +97,7 @@ class JobResponse(BaseModel):
         validation_alias = "quote_sent_stamp",
         default = None
     )
-    invoice_amount: float|None = Field(
+    invoice_amount: Decimal|None = Field(
         validation_alias = "total_invoice_amount",
         default = None
     )
@@ -210,10 +211,9 @@ class JobResponse(BaseModel):
     )
     @classmethod
     def validate_amounts(
-        cls,
-        amount: str
-    ) -> float:
-        return float(amount)
+        cls, amount: str
+    ):
+        return Decimal(amount)
 
     @field_validator(
         "badges",
@@ -221,8 +221,7 @@ class JobResponse(BaseModel):
     )
     @classmethod
     def validate_badges(
-        cls,
-        badges: str
+        cls, badges: str
     ) -> tuple[str, ...]|None:
         if badges is None: return None
         if len(badges) == 0: return None

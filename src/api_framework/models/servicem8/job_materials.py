@@ -1,6 +1,7 @@
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, \
     model_validator
 from datetime import datetime
+from decimal import Decimal
 
 from api_framework.utils.model_validations \
     import strint_to_bool, model_del_empty_str
@@ -17,10 +18,10 @@ class JobMaterialParams(TypedDict):
     sort_order: NotRequired[int]
     name: NotRequired[str]
     cost: NotRequired[float]
-    price: NotRequired[float]
+    price: NotRequired[Decimal]
     tax_rate_id: NotRequired[str]
-    displayed_cost: NotRequired[float]
-    displayed_amount: NotRequired[float | str]
+    displayed_cost: NotRequired[Decimal]
+    displayed_amount: NotRequired[Decimal | str]
     is_displayed_tax_inclusive: NotRequired[bool]
 
 class JobMaterialCreate(TypedDict):
@@ -30,11 +31,11 @@ class JobMaterialCreate(TypedDict):
     material_bundle_id: NotRequired[str]
     sort_order: NotRequired[int]
     name: NotRequired[str]
-    cost: NotRequired[float]
-    price: NotRequired[float]
+    cost: NotRequired[Decimal]
+    price: NotRequired[Decimal]
     tax_rate_id: NotRequired[str]
-    displayed_cost: NotRequired[float]
-    displayed_amount: NotRequired[float | str]
+    displayed_cost: NotRequired[Decimal]
+    displayed_amount: NotRequired[Decimal | str]
     is_displayed_tax_inclusive: NotRequired[bool]
 
 class JobMaterialUpdate(TypedDict):
@@ -44,11 +45,11 @@ class JobMaterialUpdate(TypedDict):
     material_bundle_id: NotRequired[str]
     sort_order: NotRequired[int]
     name: NotRequired[str]
-    cost: NotRequired[float]
-    price: NotRequired[float]
+    cost: NotRequired[Decimal]
+    price: NotRequired[Decimal]
     tax_rate_id: NotRequired[str]
-    displayed_cost: NotRequired[float]
-    displayed_amount: NotRequired[float | str]
+    displayed_cost: NotRequired[Decimal]
+    displayed_amount: NotRequired[Decimal | str]
     is_displayed_tax_inclusive: NotRequired[bool]
 
 class JobMaterialResponse(BaseModel):
@@ -90,22 +91,22 @@ class JobMaterialResponse(BaseModel):
         BeforeValidator(float)
     ]
     cost: Annotated[
-        float,
+        Decimal,
         BeforeValidator(float)
     ]
     price: Annotated[
-        float,
+        Decimal,
         BeforeValidator(float)
     ]
     tax_rate_id: str = Field(
         validation_alias = "tax_rate_uuid"
     )
     displayed_cost: Annotated[
-        float,
+        Decimal,
         BeforeValidator(float)
     ]
     displayed_amount: Annotated[
-        float,
+        Decimal,
         BeforeValidator(float)
     ]
     is_displayed_tax_inclusive: Annotated[

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from datetime import datetime
+from decimal import Decimal
 
 from typing import Annotated, Literal
 
@@ -72,5 +73,5 @@ class ProductResponse(CamelResponseModel):
         bool | None,
         Field(validation_alias="taxInclusive")
     ] = None
-    prices: tuple[str, ...] | None = None
+    prices: tuple[Decimal, ...] | None = None
     # There are undocumented fields ._.

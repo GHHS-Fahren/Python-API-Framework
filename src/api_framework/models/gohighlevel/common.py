@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field, AliasPath, BeforeValidator, model_validator
-from datetime import datetime
+from decimal import Decimal
 
 from typing import Annotated, Literal, Callable, Any
 
@@ -67,7 +67,7 @@ class InvoiceItemTaxResponse(BaseModel):
         Field(validation_alias="_id")
     ]
     name: str
-    rate: float
+    rate: Decimal
     calculation: Literal["exclusive"] | None = None
     description: str | None = None
     tax_id: Annotated[
@@ -93,7 +93,7 @@ class InvoiceItemResponse(BaseModel):
         Field(validation_alias="priceId")
     ] = None
     currency: str
-    amount: float
+    amount: Decimal
     quantity: Annotated[
         float,
         Field(validation_alias="qty")
@@ -117,7 +117,7 @@ class InvoiceItemResponse(BaseModel):
 class InvoiceDiscountResponse(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    value: float | None = None
+    value: Decimal | None = None
     type: Literal["percentage", "fixed"]
     valid_on_product_ids: tuple[str, ...] | None = None
 
